@@ -1,0 +1,38 @@
+{
+    "name": "Animes notifier", 
+    "description": "Notify you when your animes are up and downloadable",
+    "version": "1.0.0",
+    "manifest_version": 2,
+    "background": {
+      "page": "lib/chrome/background.html"
+    }, 
+    "options_ui": {
+      "page": "data/options/options.html",
+      "open_in_tab": true
+    },
+    "browser_action": {
+      "default_popup": "data/page/page.html", 
+      "default_title": "Animes notifier"
+    },
+    "sidebar_action": {
+      "default_panel": "data/page/page.html", 
+      "default_title": "Animes notifier"
+    }, 
+    "permissions": [
+      "tabs", 
+      "storage",
+      "https://graphql.anilist.co/",
+      "https://nyaa.si/",
+      "https://api.jikan.moe/"
+    ],  
+    "short_name": "animesnotif",
+    "developer": {
+      "name": "Geoffrey Leroy"
+    },
+    "icons": {
+      "16": "data/img/ico16.png",
+      "48": "data/img/ico48.png",
+      "128": "data/img/ico128.png"
+    }
+
+}

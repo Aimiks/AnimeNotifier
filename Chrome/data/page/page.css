@@ -1,0 +1,308 @@
+html {
+    height: 100vh;
+}
+html, body {
+    padding: 0;
+    margin: 0;
+    min-width: 380px;
+    min-height: 600px;
+    background: rgb(10,10,20);
+}
+body {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+body * {
+    box-sizing: border-box;   
+    font-family: 'Didact Gothic', Arial, Helvetica, sans-serif;
+}
+a {
+    color: white;
+}
+.hide {
+    display: none !important;
+}
+.loading {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+#animesContainer {
+    display: flex;
+    flex-direction: column;
+    color: white;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+}
+
+.animeLine {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 10px;
+    height: 120px;
+    border-radius: 5px;
+    width: 90%;
+    position: relative;
+}
+.animeLine .animeImg img {
+    width: 75px;
+    height: 75px;
+    border-radius: 100%;;
+}
+.animeLine .infosContainer {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+}
+.animeLine .infosContainer .bg {
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    height: 100%;
+    width: 100%;
+    filter: brightness(0.8);
+    transition: filter .1s ease-in;
+}
+.animeLine:hover  .infosContainer .bg{
+    filter: brightness(1);
+}
+.animeLine .infosContainer .bg::after {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    height: 100%;
+    width: 100%;
+    box-shadow: inset 1px 1px 40px 1px black;
+    content: '';
+    transition: all .1s ease-in;
+}
+.animeLine:hover .infosContainer .bg::after {
+    box-shadow: inset 1px 1px 10px 1px black;
+}
+.infosContainer .top {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    position: relative;
+    z-index: 2;
+    flex-direction: column;
+}
+#userOptions, .infosContainer .top .badges {
+    display: flex;
+    justify-content: flex-end;
+}
+#userOptions > *, .infosContainer .top .badges > *{
+    background-color: rgb(95, 31, 197);
+    border-radius: 20px;
+    box-shadow: 1px 1px 10px black;
+    margin: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    height: 20px;
+    min-width: 20px;
+}
+.infosContainer .top .badges .epNumber {
+    font-family: 'Rajdhani', Arial, Helvetica, sans-serif;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    padding: 5px;
+}
+.infosContainer .top .badges .new {
+    background-color: rgb(60, 141, 235);
+}
+.infosContainer .top .badges .behind {
+    background-color: rgb(224, 49, 49);
+}
+.infosContainer .animeTitle, .infosContainer .animeCountDown, .infosContainer .animeIsUp, .infosContainer .animeIsUpWithDl {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+}
+
+.infosContainer .animeTitle {
+    font-size: 16px;
+    background-color: rgba(0,0,0,0.75);
+    width: 100%;
+    padding: 5px 30px;
+    text-overflow: ellipsis;
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-align: center;
+}
+
+.infosContainer .animeCountDown {
+    font-size: 15px;
+    background-color: rgba(255, 255, 255, 0.75);
+    width: 60%;
+    border-top-right-radius: 50%;
+    border-top-left-radius: 50%;
+    height: 15%;
+    color: black;
+    font-weight: bold;
+    transition: all .2s ease;
+    font-family: 'Rajdhani', Arial, Helvetica, sans-serif;
+}
+.infosContainer .animeCountDown:hover {
+    height: 30%;
+    font-size: 24px;
+    width: 70%;
+    cursor: default;
+}
+.infosContainer .animeIsUp {
+    width: 60%;
+    border-top-right-radius: 50%;
+    border-top-left-radius: 50%;
+    background-color: rgba(39, 54, 107, 0.9);
+}
+.infosContainer .animeIsUpWithDl {
+    width: 100%;
+    height: 30%;
+}
+.infosContainer .dlLink {
+    text-decoration: none;
+    width: 80%;
+    height: 80%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: white;
+    background-color: rgb(17,109,30);
+    border-radius: 5px;
+    box-shadow: 1px 1px 10px black;
+    border:none;
+}
+.infosContainer .dlLink:hover {
+    filter: brightness(1.2);
+}
+#firstPage {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+#main {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.userInfos {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    flex-direction: column;
+}
+.userInfos span {
+    font-size: 24px;
+    color: white;
+    margin-bottom: 10px;
+}
+.userNameInput{
+    font-size: 15px;
+    width: 60%;
+    margin-bottom: 10px;
+}
+#userName {
+    color: white;
+    font-size: 18px;
+    text-align: center;
+    width: 80%;
+    border-radius: 10px;
+    align-self: center;
+    background-color: rgb(95, 31, 197);
+    margin-top: 10px;
+}
+#optionBar {
+    display: flex;
+    justify-content: flex-end;
+}
+#optionBar > * {
+    background: transparent;
+    color: white;
+    margin: 5px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all .2s ease;
+    border: none;
+}
+#optionBar > *:hover {
+    background-color: white;
+    color: black;
+}
+#userOptions {
+    justify-content: center;
+    margin-bottom: 10px;
+}
+#userOptions > * {
+    font-size: 10px;
+    color: white;
+    padding: 5px;
+    background: rgb(56, 101, 169);
+}
+.choiceContainer {
+    width: 60%;
+}
+.choiceContainer span {
+    font-size: 24px;
+    margin-bottom: 40px;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.choseAnilist,.choseMAL {
+    width: 100%;
+    height: 200px;
+    margin-bottom: 40px;
+    border: 1px solid white;
+    cursor: pointer;
+    padding: 40px;
+}
+.choseAnilist {
+    background-image: url("../img/Anilist.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: inherit;
+}
+.choseMAL {
+    background-image: url("../img/MAL.png");
+    background-color: inherit;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.infos {
+    font-size: 11px;
+    color: rgb(255, 208, 0);
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
