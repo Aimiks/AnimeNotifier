@@ -221,6 +221,11 @@ function add_link_to_anime(id, dl) {
 }
 function get_animes_sort_by_status() {
     return get_animes_data().sort((a, b) => {
+        if(a.new && !b.new) {
+            return -1;
+        } else if(b.new && !a.new) {
+            return 1;
+        }
         if (a.status === "UP") {
             if (b.status !== a.status) {
                 return -1
@@ -581,7 +586,10 @@ function updateBadge() {
     let color;
     let nbTotal = get_animes_data().filter(a => a.status === 'UP').length;
     let nbTotalDl = get_animes_data().filter(a => a.status === 'UP' && a.dl && a.dl.length > 0).length;
-    if (nbTotalDl < nbTotal * .25) {
+    if(nbTotal === 0) {
+        color = "#3b3b3b";
+    }
+    else if (nbTotalDl < nbTotal * .25) {
         color = "#db1414";
     } else if (nbTotalDl > nbTotal * .25 && nbTotalDl < nbTotal * .5) {
         color = "#c4640a";

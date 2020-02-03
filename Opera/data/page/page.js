@@ -1,6 +1,11 @@
 var extension = chrome.extension.getBackgroundPage();
 var intervals = [];
 var oldAnimesData = [];
+
+const scale = (num, in_min, in_max, out_min, out_max) => {
+    return (num - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
+
 function dateToCountDown(sec) {
     var d = Math.floor(sec / (3600 * 24));
     var h = Math.floor( (sec / (3600)) % 24);
@@ -27,7 +32,7 @@ function draw(entry) {
     let line_exist = animeLine.length !== 0;
     $(`.animeLine[data-id=${entry.media.id}] > *`).remove();
     if(!line_exist) {
-        animeLine = $(`<div data-id=${entry.media.id} class='animeLine'></div>`);
+        animeLine = $(`<div data-id=${entry.media.id} class='animeLine ${entry.status === "AIRING" ? "airing" : "up"}'></div>`);
     }
     let nextEp = entry.media.nextAiringEpisode ? entry.media.nextAiringEpisode.episode : entry.progress+1;
     if(entry.status === 'AIRING') {
@@ -57,8 +62,9 @@ function draw(entry) {
         badges.append($(`<div class='behind'>${entry.behind} ep. behind</div>`));
     }
     $(animeLine)
-    .append($(`<div class='infosContainer'></div>`)
-        .append(`<div class='bg' style='background-image:url(${entry.media.coverImage.extraLarge})'></div>`)
+    .append($(`<div class='infosContainer' style='background-image:url(${entry.media.coverImage.extraLarge})'></div>`)
+        .append("<div class='blurBg'></div>")
+        .append(`<div class='bgContainer'><div class='bg'></div></div>`)
         .append($(`<div class='top'></div>`)
             .append(`<div class='animeTitle'>${entry.media.title.userPreferred}</div>`)
             .append(badges)
@@ -124,6 +130,7 @@ function refresh() {
     extension.get_animes_sort_by_status().forEach( elem => {
         draw(elem);
     });
+    updateGrayScaleBG();
     $("#refresh").prop("disabled",false);
     $("#refresh").text(oldText);
 }
@@ -211,6 +218,17 @@ function drawUserOptions() {
     };
 }
 
+function updateGrayScaleBG() {
+    $(".animeLine.airing").each(function() {
+        let a = extension.get_anime($(this).data("id"));
+        let nextEp = a.media.nextAiringEpisode;
+        let lastEp = a.media.airingSchedule.nodes.find(e => e.episode === (nextEp.episode - 1));
+        let newValue = scale(nextEp.timeUntilAiring, 0, nextEp.airingAt - lastEp.airingAt, 0, 100);
+        console.log(newValue);
+        $(".bg",$(this)).width(newValue + "%");
+    });
+}
+
 function init() {
     console.log("Init...");
     if(extension.viewHaveToBeLoading()) {
@@ -249,6 +267,9 @@ function init() {
                     extension.viewHaveRefresh();
                 }
             },1000));
+            intervals.push(setInterval( () => {
+                updateGrayScaleBG();
+            }, 60000))
         } else {
             $("#firstPage").removeClass("hide");
             $("#main").addClass("hide");
