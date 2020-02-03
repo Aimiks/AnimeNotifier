@@ -221,11 +221,12 @@ function drawUserOptions() {
 function updateGrayScaleBG() {
     $(".animeLine.airing").each(function() {
         let a = extension.get_anime($(this).data("id"));
-        let nextEp = a.media.nextAiringEpisode;
-        let lastEp = a.media.airingSchedule.nodes.find(e => e.episode === (nextEp.episode - 1));
-        let newValue = scale(nextEp.timeUntilAiring, 0, nextEp.airingAt - lastEp.airingAt, 0, 100);
-        console.log(newValue);
-        $(".bg",$(this)).width(newValue + "%");
+        if(a) {
+            let nextEp = a.media.nextAiringEpisode;
+            let lastEp = a.media.airingSchedule.nodes.find(e => e.episode === (nextEp.episode - 1));
+            let newValue = scale(nextEp.timeUntilAiring, 0, nextEp.airingAt - lastEp.airingAt, 0, 100);
+            $(".bg",$(this)).width(newValue + "%");
+        }
     });
 }
 
@@ -269,7 +270,8 @@ function init() {
             },1000));
             intervals.push(setInterval( () => {
                 updateGrayScaleBG();
-            }, 60000))
+            }, 60000));
+            
         } else {
             $("#firstPage").removeClass("hide");
             $("#main").addClass("hide");
@@ -288,6 +290,8 @@ $(function() {
     $("#changeUser").on('click',function() {
         extension.removeStorage('user',() =>  {
             extension.clearIntervals();
+            extension.clearAnimesData();
+            extension.updateBadge();
             init();
         });
     });

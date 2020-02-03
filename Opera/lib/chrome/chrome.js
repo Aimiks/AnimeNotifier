@@ -62,6 +62,12 @@ query ($idMal: Int) {
                                 airingAt
                                 episode
                             }
+                            airingSchedule {
+                                nodes {
+                                episode
+                                airingAt
+                                }
+                            }
                             episodes
                           }
                       }`;
@@ -622,7 +628,9 @@ function clearIntervals() {
         clearInterval(e);
     });
 }
-
+function clearAnimesData() {
+    animes_data = [];
+}
 function viewHaveToBeLoading() {
     return viewIsLoading;
 }

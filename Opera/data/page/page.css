@@ -131,7 +131,7 @@ a {
     -webkit-filter: blur(8px); -moz-filter: blur(8px);
     -o-filter: blur(8px); -ms-filter: blur(8px);
     animation-name: animateBgBlur;
-    animation-duration: 15s;
+    animation-duration: 25s;
     animation-iteration-count: infinite;
     animation-timing-function: linear;
 }
