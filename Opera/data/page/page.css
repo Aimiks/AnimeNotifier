@@ -90,7 +90,6 @@ a {
     height: 100%;
     width: 100%;
     filter: grayscale(1) invert(1);
-    transition: width .3s ease-in;
 }
 .animeLine:hover  .infosContainer .bgContainer{
     filter: brightness(1);
