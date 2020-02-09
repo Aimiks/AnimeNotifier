@@ -333,7 +333,9 @@ $(function() {
             $("#main").addClass("hide");
         } else {
             $(".loading").addClass("hide");
-            $("#main").removeClass("hide");
+            if($("#firstPage").hasClass("hide")) {
+                $("#main").removeClass("hide");
+            }
         }
     },100)
 });
