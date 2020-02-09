@@ -78,10 +78,6 @@ function draw(entry) {
 function initAnimes() {
     console.log("InitAnimes...");
     refresh();
-    $(".dlLink").on('click',function() {
-        extension.openLink($(this).data('dl'));
-    });
-
 }
 function updateCoutDowns() {
     $(".animeCountDown").each(function() {
@@ -133,6 +129,9 @@ function refresh() {
     updateGrayScaleBG();
     $("#refresh").prop("disabled",false);
     $("#refresh").text(oldText);
+    $(".dlLink").on('click',function() {
+        extension.openLink($(this).data('dl'));
+    });
 }
 function getUserOptionString(key, val) {
     if(key === 'episodeBehind') {
@@ -257,7 +256,7 @@ function init() {
                 decreaseCountDowns();
             }, 1000));
             intervals.push(setInterval( ()=> {
-                if(isOldDataDeprecated(extension.get_animes_data())) {
+                if(!(extension.viewHaveToBeLoading() || extension.viewHaveToRefresh()) && isOldDataDeprecated(extension.get_animes_data())) {
                     refresh();
                 }
             }, 5000));
@@ -329,7 +328,7 @@ $(function() {
         $(".userMAL").removeClass("hide");
     });
     setInterval(() => {
-        if(extension.viewHaveToBeLoading()) {
+        if(extension.viewHaveToBeLoading() || extension.viewHaveToRefresh()) {
             $(".loading").removeClass("hide");
         } else {
             $(".loading").addClass("hide");

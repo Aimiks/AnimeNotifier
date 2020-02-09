@@ -531,13 +531,15 @@ async function init() {
     }, 1000))
     intervals.push(setInterval( async ()=> {
         if(userOptionsChanged()) {
+            viewIsLoading = true;
+            animes_data = [];
+            await requestData();
             for (const a of get_animes_data().filter(a => a.status === 'UP')) {
-                delete a.dl;
                 await new Promise(r => setTimeout(r, 500));
                 await getDlLinks(a);
             }
+            viewIsLoading = false;
             viewRefresh = true;
-            gettingNewLinks = false;
         }
     }, 1000));
 
