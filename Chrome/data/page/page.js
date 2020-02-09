@@ -1,6 +1,11 @@
 var extension = chrome.extension.getBackgroundPage();
 var intervals = [];
 var oldAnimesData = [];
+
+const scale = (num, in_min, in_max, out_min, out_max) => {
+    return (num - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
+
 function dateToCountDown(sec) {
     var d = Math.floor(sec / (3600 * 24));
     var h = Math.floor( (sec / (3600)) % 24);
@@ -27,7 +32,7 @@ function draw(entry) {
     let line_exist = animeLine.length !== 0;
     $(`.animeLine[data-id=${entry.media.id}] > *`).remove();
     if(!line_exist) {
-        animeLine = $(`<div data-id=${entry.media.id} class='animeLine'></div>`);
+        animeLine = $(`<div data-id=${entry.media.id} class='animeLine ${entry.status === "AIRING" ? "airing" : "up"}'></div>`);
     }
     let nextEp = entry.media.nextAiringEpisode ? entry.media.nextAiringEpisode.episode : entry.progress+1;
     if(entry.status === 'AIRING') {
@@ -39,7 +44,11 @@ function draw(entry) {
         if(entry.dl && entry.dl.length) {
             div_infos = `<div data-id=${entry.media.id} class='animeIsUpWithDl'>`;
             entry.dl.forEach((dl,ind) => {
-                div_infos += `<button class='dlLink' data-dl="${dl.magnet}" title="${dl.name}">Magnet ${ind+1}</button>`;
+                if(!dl.strict) {
+                    div_infos += `<button class='dlLink notStrict' data-dl="${dl.magnet}" title="Result isn't strict. Magnet can lead to an anime with a similar name.\nPlease verify the name before downloading.\n\n${dl.name}">Magnet ${ind+1}</button>`;
+                } else {
+                    div_infos += `<button class='dlLink' data-dl="${dl.magnet}" title="${dl.name}">Magnet ${ind+1}</button>`;
+                }
             });
             div_infos += '</div>';
         } else {
@@ -53,8 +62,9 @@ function draw(entry) {
         badges.append($(`<div class='behind'>${entry.behind} ep. behind</div>`));
     }
     $(animeLine)
-    .append($(`<div class='infosContainer'></div>`)
-        .append(`<div class='bg' style='background-image:url(${entry.media.coverImage.extraLarge})'></div>`)
+    .append($(`<div class='infosContainer' style='background-image:url(${entry.media.coverImage.extraLarge})'></div>`)
+        .append("<div class='blurBg'></div>")
+        .append(`<div class='bgContainer'><div class='bg'></div></div>`)
         .append($(`<div class='top'></div>`)
             .append(`<div class='animeTitle'>${entry.media.title.userPreferred}</div>`)
             .append(badges)
@@ -68,10 +78,6 @@ function draw(entry) {
 function initAnimes() {
     console.log("InitAnimes...");
     refresh();
-    $(".dlLink").on('click',function() {
-        extension.openLink($(this).data('dl'));
-    });
-
 }
 function updateCoutDowns() {
     $(".animeCountDown").each(function() {
@@ -120,8 +126,12 @@ function refresh() {
     extension.get_animes_sort_by_status().forEach( elem => {
         draw(elem);
     });
+    updateGrayScaleBG();
     $("#refresh").prop("disabled",false);
     $("#refresh").text(oldText);
+    $(".dlLink").on('click',function() {
+        extension.openLink($(this).data('dl'));
+    });
 }
 function getUserOptionString(key, val) {
     if(key === 'episodeBehind') {
@@ -207,8 +217,25 @@ function drawUserOptions() {
     };
 }
 
+function updateGrayScaleBG() {
+    $(".animeLine.airing").each(function() {
+        let a = extension.get_anime($(this).data("id"));
+        if(a) {
+            let nextEp = a.media.nextAiringEpisode;
+            let lastEp = a.media.airingSchedule.nodes.find(e => e.episode === (nextEp.episode - 1));
+            let newValue = scale(nextEp.timeUntilAiring, 0, nextEp.airingAt - lastEp.airingAt, 0, 100);
+            $(".bg",$(this)).width(newValue + "%");
+        }
+    });
+}
+
 function init() {
     console.log("Init...");
+    if(extension.viewHaveToBeLoading()) {
+        $(".loading").removeClass("hide");
+    } else {
+        $(".loading").addClass("hide");
+    }
     intervals.forEach( e => {
         clearInterval(e);
     });
@@ -216,10 +243,8 @@ function init() {
         if(res.user) {
             $("#firstPage").addClass("hide");
             $("#main").addClass("hide");
-            if(!extension.isInit()) {
-                $(".loading").removeClass("hide");
+            if(!extension.isInit() && extension.isInit() !== 'pending') {
                 await extension.init();
-                $(".loading").addClass("hide");
             } else {
                 extension.requestData();
             }
@@ -231,7 +256,7 @@ function init() {
                 decreaseCountDowns();
             }, 1000));
             intervals.push(setInterval( ()=> {
-                if(isOldDataDeprecated(extension.get_animes_data())) {
+                if(!(extension.viewHaveToBeLoading() || extension.viewHaveToRefresh()) && isOldDataDeprecated(extension.get_animes_data())) {
                     refresh();
                 }
             }, 5000));
@@ -242,6 +267,10 @@ function init() {
                     extension.viewHaveRefresh();
                 }
             },1000));
+            intervals.push(setInterval( () => {
+                updateGrayScaleBG();
+            }, 60000));
+            
         } else {
             $("#firstPage").removeClass("hide");
             $("#main").addClass("hide");
@@ -260,6 +289,8 @@ $(function() {
     $("#changeUser").on('click',function() {
         extension.removeStorage('user',() =>  {
             extension.clearIntervals();
+            extension.clearAnimesData();
+            extension.updateBadge();
             init();
         });
     });
@@ -296,4 +327,13 @@ $(function() {
         $(".choiceContainer").addClass("hide");
         $(".userMAL").removeClass("hide");
     });
+    setInterval(() => {
+        if(extension.viewHaveToBeLoading() || extension.viewHaveToRefresh()) {
+            $(".loading").removeClass("hide");
+            $("#main").addClass("hide");
+        } else {
+            $(".loading").addClass("hide");
+            $("#main").removeClass("hide");
+        }
+    },100)
 });

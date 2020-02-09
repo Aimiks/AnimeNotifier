@@ -62,6 +62,12 @@ query ($idMal: Int) {
                                 airingAt
                                 episode
                             }
+                            airingSchedule {
+                                nodes {
+                                episode
+                                airingAt
+                                }
+                            }
                             episodes
                           }
                       }`;
@@ -103,6 +109,7 @@ var user;
 var user_options;
 var oldUserOptions = {};
 var viewRefresh = false;
+var viewIsLoading = false;
 
 function getUserOptionsValue(key) {
     let val = user_options[key];
@@ -220,6 +227,11 @@ function add_link_to_anime(id, dl) {
 }
 function get_animes_sort_by_status() {
     return get_animes_data().sort((a, b) => {
+        if(a.new && !b.new) {
+            return -1;
+        } else if(b.new && !a.new) {
+            return 1;
+        }
         if (a.status === "UP") {
             if (b.status !== a.status) {
                 return -1
@@ -368,14 +380,36 @@ async function searchDlLinks(title, ep, lang, quality, format) {
         query+='+' + format;
     }
     console.log(`Query : https://nyaa.si/?f=1&c=${category}&q=${query}&p=1&o=desc&s=seeders`);
+    // regex to get string that contain TITLE and are not TITLE
+    let regexStrictQuery = `([a-zA-Z]${title}[a-zA-Z])|(${title}[a-zA-Z0])|([a-zA-Z0]${title})`;
+    let regexStrict = new RegExp(regexStrictQuery, 'gmi');
+    // regex to get string that contain EP or 0+EP
+    let regexEpisode = new RegExp(`\\D${ep}\\D|\\D0${ep}\\D`,'gmi');
+    let returnObj = null;
+    let findStrict = false;
     return fetch(`https://nyaa.si/?f=1&c=${category}&q=${query}&p=1&o=desc&s=seeders`, opt)
         .then(response => response.text())
         .then(txt => {
             let html = txt;
-            let tr = $(html).find("table:first-child tbody tr:first-child");
-            let name = $(tr).find("td:nth-child(2) a:not(.comments)").text();
-            let magnet = $(tr).find("td:nth-child(3) a:nth-child(2)").attr("href");
-            return { name: name, magnet: magnet };
+            let tr = $(html).find("table:first-child tbody tr");
+            $(tr).each(function() {
+                if(!findStrict) {
+                    let name = $(this).find("td:nth-child(2) a:not(.comments)").text();
+                    let magnet = $(this).find("td:nth-child(3) a:nth-child(2)").attr("href");
+                    if(name) {
+                        if(name.match(regexStrict) && name.match(regexEpisode)) {
+                            if(!returnObj) {
+                                returnObj = {name: name, magnet: magnet, strict: false}
+                            }
+                        } else if(name.match(regexEpisode)) {
+                            returnObj = {name: name, magnet: magnet, strict: true}
+                            findStrict = true;
+                        }
+                    }
+                }
+            });
+
+            return returnObj;
         }).catch(e => {
             console.error(e);
             return null
@@ -461,6 +495,8 @@ async function loadDataFromStorage() {
     });
 }
 async function init() {
+    viewIsLoading = true;
+    initialized = "pending";
     intervals.forEach(e => {
         clearInterval(e);
     });
@@ -479,6 +515,8 @@ async function init() {
         await getDlLinks(a);
     }
     initialized = true;
+    viewRefresh = true;
+    viewIsLoading = false;
     intervals.push(setInterval(() => {
         requestData();
     },getUserOptionsValue("delayRequestData")));
@@ -493,13 +531,15 @@ async function init() {
     }, 1000))
     intervals.push(setInterval( async ()=> {
         if(userOptionsChanged()) {
+            viewIsLoading = true;
+            animes_data = [];
+            await requestData();
             for (const a of get_animes_data().filter(a => a.status === 'UP')) {
-                delete a.dl;
                 await new Promise(r => setTimeout(r, 500));
                 await getDlLinks(a);
             }
+            viewIsLoading = false;
             viewRefresh = true;
-            gettingNewLinks = false;
         }
     }, 1000));
 
@@ -552,7 +592,10 @@ function updateBadge() {
     let color;
     let nbTotal = get_animes_data().filter(a => a.status === 'UP').length;
     let nbTotalDl = get_animes_data().filter(a => a.status === 'UP' && a.dl && a.dl.length > 0).length;
-    if (nbTotalDl < nbTotal * .25) {
+    if(nbTotal === 0) {
+        color = "#3b3b3b";
+    }
+    else if (nbTotalDl < nbTotal * .25) {
         color = "#db1414";
     } else if (nbTotalDl > nbTotal * .25 && nbTotalDl < nbTotal * .5) {
         color = "#c4640a";
@@ -585,4 +628,16 @@ function clearIntervals() {
         clearInterval(e);
     });
 }
+function clearAnimesData() {
+    animes_data = [];
+}
+function viewHaveToBeLoading() {
+    return viewIsLoading;
+}
+
+getStorage('user', (storage) => {
+    if(storage.user) {
+        init();
+    }
+});
 

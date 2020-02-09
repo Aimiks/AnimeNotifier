@@ -12,6 +12,7 @@ body {
     height: 100%;
     display: flex;
     flex-direction: column;
+    position: relative;
 }
 body * {
     box-sizing: border-box;   
@@ -31,6 +32,9 @@ a {
     align-items: center;
     justify-content: center;
     color: white;
+    position: absolute;
+    background-color: inherit;
+    z-index: 99;
 }
 #animesContainer {
     display: flex;
@@ -62,24 +66,75 @@ a {
     justify-content: space-between;
     align-items: center;
     position: relative;
+    background-position: right;
 }
-.animeLine .infosContainer .bg {
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
+.animeLine .infosContainer .bgContainer {
+    background-position: inherit;
+    background-image:inherit;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    filter: brightness(.8);
+    transition: brightness .1s ease-in;
+
+}
+.animeLine.airing .infosContainer .bg {
+    background-position: inherit;
+    background-image:inherit;
     position: absolute;
     top: 0;
-    left: 0;
+    right: 0;
     z-index: 1;
     height: 100%;
     width: 100%;
-    filter: brightness(0.8);
-    transition: filter .1s ease-in;
+    filter: grayscale(1) invert(1);
 }
-.animeLine:hover  .infosContainer .bg{
+.animeLine:hover  .infosContainer .bgContainer{
     filter: brightness(1);
 }
-.animeLine .infosContainer .bg::after {
+/*.animeLine .infosContainer .bg::before {
+    background-image:inherit;
+    background-position: inherit;
+    content: " ";
+    width : 100%;
+    height : 100%;
+    position: absolute;
+    left:0;
+    top:0;
+    filter: grayscale(0);
+
+}*/
+@keyframes animateBgBlur {
+    0% {background-position: 100% 50%;}
+    25% {background-position: 50% 0%;}
+    50% {background-position: 0% 50%;}
+    75% {background-position: 50% 100%;}
+    100% {background-position: 100% 50%;}
+  }
+.animeLine .infosContainer .blurBg {
+    background-position: inherit;
+    background-image:inherit;
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 100%;
+    filter: blur(0px);
+    -webkit-filter: blur(0px); -moz-filter: blur(0px);
+    -o-filter: blur(0px); -ms-filter: blur(0px); 
+}
+.animeLine:hover .infosContainer .blurBg {
+    filter: blur(8px);
+    -webkit-filter: blur(8px); -moz-filter: blur(8px);
+    -o-filter: blur(8px); -ms-filter: blur(8px);
+    animation-name: animateBgBlur;
+    animation-duration: 25s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+}
+.animeLine .infosContainer .bgContainer::after {
     position: absolute;
     top: 0;
     left: 0;
@@ -90,7 +145,7 @@ a {
     content: '';
     transition: all .1s ease-in;
 }
-.animeLine:hover .infosContainer .bg::after {
+.animeLine:hover .infosContainer .bgContainer::after {
     box-shadow: inset 1px 1px 10px 1px black;
 }
 .infosContainer .top {
@@ -192,6 +247,10 @@ a {
     border-radius: 5px;
     box-shadow: 1px 1px 10px black;
     border:none;
+    position: relative;
+}
+.infosContainer .dlLink.notStrict {
+    background-color: rgb(154, 116, 15);
 }
 .infosContainer .dlLink:hover {
     filter: brightness(1.2);

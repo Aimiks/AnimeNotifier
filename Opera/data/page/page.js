@@ -330,8 +330,10 @@ $(function() {
     setInterval(() => {
         if(extension.viewHaveToBeLoading() || extension.viewHaveToRefresh()) {
             $(".loading").removeClass("hide");
+            $("#main").addClass("hide");
         } else {
             $(".loading").addClass("hide");
+            $("#main").removeClass("hide");
         }
     },100)
 });
