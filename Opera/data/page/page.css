@@ -365,3 +365,8 @@ a {
     align-items: center;
     text-align: center;
 }
+.error {
+    color: red;
+    font-size: 20px;
+    padding: 20px;
+}

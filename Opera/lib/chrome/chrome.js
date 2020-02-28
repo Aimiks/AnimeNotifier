@@ -110,6 +110,10 @@ var user_options;
 var oldUserOptions = {};
 var viewRefresh = false;
 var viewIsLoading = false;
+var backgroundError = false;
+var backgroundErrorMsg = "";
+var remainingFetch = 99;
+var canFetchData = true;
 
 function getUserOptionsValue(key) {
     let val = user_options[key];
@@ -254,6 +258,15 @@ function get_animes_sort_by_status() {
     });
 }
 async function requestData() {
+    if(canFetchData && remainingFetch <= 0) {
+        canFetchData = false;
+        setTimeout(() => canFetchData = true,70 * 1000);
+    }
+    if(!canFetchData) {
+        console.log("Fetch abort due to rate limit");
+        return false;
+    } 
+
     console.log("Requesting data...");
     if (user.type === 'anilist') {
         return fetch(ani_url, options).then(handleResponse)
@@ -301,6 +314,7 @@ async function requestData() {
     }
 
     function handleResponse(response) {
+        remainingFetch = response.headers.get("X-RateLimit-Remaining");
         return response.json().then(function (json) {
             return response.ok ? json : Promise.reject(json);
         });
@@ -342,12 +356,24 @@ async function requestData() {
             if (entry.media.nextAiringEpisode && entry.progress === (entry.media.nextAiringEpisode.episode - 1)) {
             }*/
         });
+        if(backgroundError === true) {
+            viewRefresh = true;
+        }
+        backgroundError = false;
+        backgroundErrorMsg = "";
         updateBadge();
         return entries;
     }
 
     function handleError(error) {
-        console.error(error);
+        console.error({error, time: Date.now()});
+        var msg = `An error occured : \n`;
+        error.errors.forEach((e) => {
+            msg += `${e.message} (${e.status})\n`;
+        });
+        msg += "Please wait 1 minute before retries.";
+        backgroundError = true;
+        backgroundErrorMsg = msg;
         return null;
     }
 }
@@ -597,7 +623,7 @@ function updateBadge() {
     if(nbTotal === 0) {
         color = "#3b3b3b";
     }
-    else if (nbTotalDl < nbTotal * .25) {
+    else if (nbTotalDl <= nbTotal * .25) {
         color = "#db1414";
     } else if (nbTotalDl > nbTotal * .25 && nbTotalDl < nbTotal * .5) {
         color = "#c4640a";
@@ -635,6 +661,14 @@ function clearAnimesData() {
 }
 function viewHaveToBeLoading() {
     return viewIsLoading;
+}
+
+function viewHaveToShowError() {
+    return backgroundError;
+}
+
+function getErrorMsg() {
+    return backgroundErrorMsg;
 }
 
 getStorage('user', (storage) => {

@@ -229,6 +229,19 @@ function updateGrayScaleBG() {
     });
 }
 
+function showError(errorMsg) {
+    if(!$(".error").length || $(".error").text() !== errorMsg) {
+        $("#animesContainer > *").remove();
+        $(".error").remove();
+        $("#animesContainer").append(`<div class='error'>${errorMsg}</div>`);
+    }
+
+}
+
+function clearError() {
+    $(".error").remove();
+}
+
 function init() {
     console.log("Init...");
     if(extension.viewHaveToBeLoading()) {
@@ -270,6 +283,13 @@ function init() {
             intervals.push(setInterval( () => {
                 updateGrayScaleBG();
             }, 60000));
+            intervals.push(setInterval( () => {
+                 if(extension.viewHaveToShowError()) {
+                    showError(extension.getErrorMsg());
+                } else {
+                    clearError();
+                }
+            }, 1000));
             
         } else {
             $("#firstPage").removeClass("hide");
