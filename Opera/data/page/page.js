@@ -44,11 +44,21 @@ function draw(entry) {
         if(entry.dl && entry.dl.length) {
             div_infos = `<div data-id=${entry.media.id} class='animeIsUpWithDl'>`;
             entry.dl.forEach((dl,ind) => {
-                if(!dl.strict) {
-                    div_infos += `<button class='dlLink notStrict' data-dl="${dl.magnet}" title="Result isn't strict. Magnet can lead to an anime with a similar name.\nPlease verify the name before downloading.\n\n${dl.name}">Magnet ${ind+1}</button>`;
-                } else {
-                    div_infos += `<button class='dlLink' data-dl="${dl.magnet}" title="${dl.name}">Magnet ${ind+1}</button>`;
+                // maximum is 3 atm
+                if(ind<=2) {
+                    div_infos += `<div class='downloadInteractionContainer'>`;
+                    var notStrictClass = dl.strict ? '' : 'notStrict ';
+                    var title = dl.strict ? dl.name : `Result isn't strict. This can lead to an anime with a similar name.\nPlease verify the name before downloading.\n\n${dl.name}`;
+                    div_infos += `<a class='dlButton dlMagnet ${notStrictClass}' href="${dl.magnet}" title="Magnet download\n--\n${title}">${svgMagnet}</a>`;
+                    div_infos += `<a class='dlButton dlLink ${notStrictClass}' href="${dl.dlLink}" title="Direct download\n--\n${title}">${svgDl}</a>`;
+                    div_infos += `<a class='dlButton dlPage' href="${dl.mainPage}" title="Go to episode page">${svgPage}</a>`;
+                    div_infos += `<div class='ratio'>
+                        <span title="Ratio up" class="upRatio">${dl.up}</span><span title="Ratio down" class="downRatio">${dl.down}</span>
+                    </div>`; 
+
+                    div_infos += `</div'>`;
                 }
+
             });
             div_infos += '</div>';
         } else {
@@ -129,8 +139,8 @@ function refresh() {
     updateGrayScaleBG();
     $("#refresh").prop("disabled",false);
     $("#refresh").text(oldText);
-    $(".dlLink").on('click',function() {
-        extension.openLink($(this).data('dl'));
+    $(".dlButton").on('click',function() {
+        extension.openLink($(this).attr("href"));
     });
 }
 function getUserOptionString(key, val) {

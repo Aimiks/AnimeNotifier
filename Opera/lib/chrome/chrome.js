@@ -260,7 +260,7 @@ function get_animes_sort_by_status() {
 async function requestData() {
     if(canFetchData && remainingFetch <= 0) {
         canFetchData = false;
-        setTimeout(() => canFetchData = true,70 * 1000);
+        setTimeout(() => {canFetchData = true; remainingFetch = 99;},70 * 1000);
     }
     if(!canFetchData) {
         console.log("Fetch abort due to rate limit");
@@ -418,17 +418,22 @@ async function searchDlLinks(title, ep, lang, quality, format) {
         .then(txt => {
             let html = txt;
             let tr = $(html).find("table:first-child tbody tr");
+            let domain = 'https://nyaa.si';
             $(tr).each(function() {
                 if(!findStrict) {
                     let name = $(this).find("td:nth-child(2) a:not(.comments)").text();
                     let magnet = $(this).find("td:nth-child(3) a:nth-child(2)").attr("href");
+                    let dlLink = domain + $(this).find("td:nth-child(3) a:nth-child(1)").attr("href");
+                    let mainPage = domain + $(this).find("td:nth-child(2) a:nth-child(2)").attr("href");
+                    let up = $(this).find("td:nth-child(6)").text();
+                    let down = $(this).find("td:nth-child(7)").text();
                     if(name) {
                         if(name.match(regexStrict) && name.match(regexEpisode)) {
                             if(!returnObj) {
-                                returnObj = {name: name, magnet: magnet, strict: false}
+                                returnObj = {name, magnet, dlLink, mainPage, strict: false}, up, down
                             }
                         } else if(name.match(regexEpisode)) {
-                            returnObj = {name: name, magnet: magnet, strict: true}
+                            returnObj = {name, magnet, dlLink, mainPage, strict: true, up, down}
                             findStrict = true;
                         }
                     }
