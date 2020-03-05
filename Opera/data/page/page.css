@@ -136,11 +136,11 @@ a {
     -ms-filter: blur(0px); 
 }
 .animeLine.up .infosContainer .blurBg {
-    filter: blur(6px) sepia(2) saturate(4) hue-rotate(65deg);
-    -webkit-filter: blur(6px) sepia(2) saturate(4) hue-rotate(65deg);
-    -moz-filter: blur(6px) sepia(2) saturate(4) hue-rotate(65deg);
-    -o-filter: blur(6px) sepia(2) saturate(4) hue-rotate(65deg);
-    -ms-filter: blur(6px) sepia(2) saturate(4) hue-rotate(65deg);
+    filter: blur(6px) sepia(1) saturate(4) hue-rotate(65deg);
+    -webkit-filter: blur(6px) sepia(1) saturate(4) hue-rotate(65deg);
+    -moz-filter: blur(6px) sepia(1) saturate(4) hue-rotate(65deg);
+    -o-filter: blur(6px) sepia(1) saturate(4) hue-rotate(65deg);
+    -ms-filter: blur(6px) sepia(1) saturate(4) hue-rotate(65deg);
     animation-name: animateBgBlurSmall;
     animation-duration: 50s;
     animation-iteration-count: infinite;
