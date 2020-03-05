@@ -51,7 +51,7 @@ function draw(entry) {
                     var title = dl.strict ? dl.name : `Result isn't strict. This can lead to an anime with a similar name.\nPlease verify the name before downloading.\n\n${dl.name}`;
                     div_infos += `<a class='dlButton dlMagnet ${notStrictClass}' href="${dl.magnet}" title="Magnet download\n--\n${title}">${svgMagnet}</a>`;
                     div_infos += `<a class='dlButton dlLink ${notStrictClass}' href="${dl.dlLink}" title="Direct download\n--\n${title}">${svgDl}</a>`;
-                    div_infos += `<a class='dlButton dlPage' href="${dl.mainPage}" title="Go to episode page">${svgPage}</a>`;
+                    div_infos += `<a class='dlButton dlPage' href="${dl.mainPage}" title="Go to download page\n--\n${title}">${svgPage}</a>`;
                     div_infos += `<div class='ratio'>
                         <span title="Ratio up" class="upRatio">${dl.up}</span><span title="Ratio down" class="downRatio">${dl.down}</span>
                     </div>`; 
@@ -74,7 +74,15 @@ function draw(entry) {
     $(animeLine)
     .append($(`<div class='infosContainer' style='background-image:url(${entry.media.coverImage.extraLarge})'></div>`)
         .append("<div class='blurBg'></div>")
-        .append(`<div class='bgContainer'><div class='bg'></div></div>`)
+        .append(`<div class='bgContainer'>
+            <div class='bg glitch glitch--style-1'>
+                <div class="glitch__img"></div>
+                <div class="glitch__img"></div>
+                <div class="glitch__img"></div>
+                <div class="glitch__img"></div>
+                <div class="glitch__img"></div>
+            </div>
+        </div>`)
         .append($(`<div class='top'></div>`)
             .append(`<div class='animeTitle'>${entry.media.title.userPreferred}</div>`)
             .append(badges)

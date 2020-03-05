@@ -78,6 +78,8 @@ var variables = {
 var ani_url = 'https://graphql.anilist.co',
     options = {
         method: 'POST',
+        cache: 'no-cache',
+        credentials: 'same-origin',
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
@@ -93,6 +95,8 @@ var mal_ani_variables = {
 var mal_ani_url = 'https://graphql.anilist.co',
     mal_ani_options = {
         method: 'POST',
+        cache: 'no-cache',
+        credentials: 'same-origin',
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
@@ -383,7 +387,9 @@ async function searchDlLinks(title, ep, lang, quality, format) {
     let query = title.replace(/\s/gmi,"+");
     let category = '1_0';
     let opt = {
-        method: 'GET'
+        method: 'GET',
+        cache: 'no-cache',
+        credentials: 'same-origin'
     }
     if(lang === null) {
         category= '1_4';
