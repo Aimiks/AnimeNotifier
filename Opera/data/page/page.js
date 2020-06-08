@@ -32,7 +32,7 @@ function draw(entry) {
     let line_exist = animeLine.length !== 0;
     $(`.animeLine[data-id=${entry.media.id}] > *`).remove();
     if(!line_exist) {
-        animeLine = $(`<div data-id=${entry.media.id} class='animeLine ${entry.status === "AIRING" ? "airing" : "up"}'></div>`);
+        animeLine = $(`<div data-id=${entry.media.id} class='animeLine ${entry.status === "AIRING" ? "airing" : "up"} ${(entry.dl && entry.dl.length) ? 'withDl' : ''}'></div>`);
     }
     let nextEp = entry.media.nextAiringEpisode ? entry.media.nextAiringEpisode.episode : entry.progress+1;
     if(entry.status === 'AIRING') {
@@ -241,8 +241,10 @@ function updateGrayScaleBG() {
         if(a) {
             let nextEp = a.media.nextAiringEpisode;
             let lastEp = a.media.airingSchedule.nodes.find(e => e.episode === (nextEp.episode - 1));
-            let newValue = scale(nextEp.timeUntilAiring, 0, nextEp.airingAt - lastEp.airingAt, 0, 100);
-            $(".bg",$(this)).width(newValue + "%");
+            if(lastEp) {
+                let newValue = scale(nextEp.timeUntilAiring, 0, nextEp.airingAt - lastEp.airingAt, 0, 100);
+                $(".bg",$(this)).width(newValue + "%");
+            }
         }
     });
 }

@@ -436,7 +436,7 @@ async function searchDlLinks(title, ep, lang, quality, format) {
                     if(name) {
                         if(name.match(regexStrict) && name.match(regexEpisode)) {
                             if(!returnObj) {
-                                returnObj = {name, magnet, dlLink, mainPage, strict: false}, up, down
+                                returnObj = {name, magnet, dlLink, mainPage, strict: false, up, down}
                             }
                         } else if(name.match(regexEpisode)) {
                             returnObj = {name, magnet, dlLink, mainPage, strict: true, up, down}
