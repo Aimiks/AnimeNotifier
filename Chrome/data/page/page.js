@@ -32,7 +32,7 @@ function draw(entry) {
     let line_exist = animeLine.length !== 0;
     $(`.animeLine[data-id=${entry.media.id}] > *`).remove();
     if(!line_exist) {
-        animeLine = $(`<div data-id=${entry.media.id} class='animeLine ${entry.status === "AIRING" ? "airing" : "up"}'></div>`);
+        animeLine = $(`<div data-id=${entry.media.id} class='animeLine ${entry.status === "AIRING" ? "airing" : "up"} ${(entry.dl && entry.dl.length) ? 'withDl' : ''}'></div>`);
     }
     let nextEp = entry.media.nextAiringEpisode ? entry.media.nextAiringEpisode.episode : entry.progress+1;
     if(entry.status === 'AIRING') {
@@ -44,11 +44,21 @@ function draw(entry) {
         if(entry.dl && entry.dl.length) {
             div_infos = `<div data-id=${entry.media.id} class='animeIsUpWithDl'>`;
             entry.dl.forEach((dl,ind) => {
-                if(!dl.strict) {
-                    div_infos += `<button class='dlLink notStrict' data-dl="${dl.magnet}" title="Result isn't strict. Magnet can lead to an anime with a similar name.\nPlease verify the name before downloading.\n\n${dl.name}">Magnet ${ind+1}</button>`;
-                } else {
-                    div_infos += `<button class='dlLink' data-dl="${dl.magnet}" title="${dl.name}">Magnet ${ind+1}</button>`;
+                // maximum is 3 atm
+                if(ind<=2) {
+                    div_infos += `<div class='downloadInteractionContainer'>`;
+                    var notStrictClass = dl.strict ? '' : 'notStrict ';
+                    var title = dl.strict ? dl.name : `Result isn't strict. This can lead to an anime with a similar name.\nPlease verify the name before downloading.\n\n${dl.name}`;
+                    div_infos += `<a class='dlButton dlMagnet ${notStrictClass}' href="${dl.magnet}" title="Magnet download\n--\n${title}">${svgMagnet}</a>`;
+                    div_infos += `<a class='dlButton dlLink ${notStrictClass}' href="${dl.dlLink}" title="Direct download\n--\n${title}">${svgDl}</a>`;
+                    div_infos += `<a class='dlButton dlPage' href="${dl.mainPage}" title="Go to download page\n--\n${title}">${svgPage}</a>`;
+                    div_infos += `<div class='ratio'>
+                        <span title="Ratio up" class="upRatio">${dl.up}</span><span title="Ratio down" class="downRatio">${dl.down}</span>
+                    </div>`; 
+
+                    div_infos += `</div'>`;
                 }
+
             });
             div_infos += '</div>';
         } else {
@@ -64,7 +74,15 @@ function draw(entry) {
     $(animeLine)
     .append($(`<div class='infosContainer' style='background-image:url(${entry.media.coverImage.extraLarge})'></div>`)
         .append("<div class='blurBg'></div>")
-        .append(`<div class='bgContainer'><div class='bg'></div></div>`)
+        .append(`<div class='bgContainer'>
+            <div class='bg glitch glitch--style-1'>
+                <div class="glitch__img"></div>
+                <div class="glitch__img"></div>
+                <div class="glitch__img"></div>
+                <div class="glitch__img"></div>
+                <div class="glitch__img"></div>
+            </div>
+        </div>`)
         .append($(`<div class='top'></div>`)
             .append(`<div class='animeTitle'>${entry.media.title.userPreferred}</div>`)
             .append(badges)
@@ -129,8 +147,8 @@ function refresh() {
     updateGrayScaleBG();
     $("#refresh").prop("disabled",false);
     $("#refresh").text(oldText);
-    $(".dlLink").on('click',function() {
-        extension.openLink($(this).data('dl'));
+    $(".dlButton").on('click',function() {
+        extension.openLink($(this).attr("href"));
     });
 }
 function getUserOptionString(key, val) {
@@ -223,10 +241,25 @@ function updateGrayScaleBG() {
         if(a) {
             let nextEp = a.media.nextAiringEpisode;
             let lastEp = a.media.airingSchedule.nodes.find(e => e.episode === (nextEp.episode - 1));
-            let newValue = scale(nextEp.timeUntilAiring, 0, nextEp.airingAt - lastEp.airingAt, 0, 100);
-            $(".bg",$(this)).width(newValue + "%");
+            if(lastEp) {
+                let newValue = scale(nextEp.timeUntilAiring, 0, nextEp.airingAt - lastEp.airingAt, 0, 100);
+                $(".bg",$(this)).width(newValue + "%");
+            }
         }
     });
+}
+
+function showError(errorMsg) {
+    if(!$(".error").length || $(".error").text() !== errorMsg) {
+        $("#animesContainer > *").remove();
+        $(".error").remove();
+        $("#animesContainer").append(`<div class='error'>${errorMsg}</div>`);
+    }
+
+}
+
+function clearError() {
+    $(".error").remove();
 }
 
 function init() {
@@ -270,6 +303,13 @@ function init() {
             intervals.push(setInterval( () => {
                 updateGrayScaleBG();
             }, 60000));
+            intervals.push(setInterval( () => {
+                 if(extension.viewHaveToShowError()) {
+                    showError(extension.getErrorMsg());
+                } else {
+                    clearError();
+                }
+            }, 1000));
             
         } else {
             $("#firstPage").removeClass("hide");

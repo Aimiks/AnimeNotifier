@@ -17,7 +17,7 @@ function restoreOptions() {
     chrome.storage.sync.get({
         episodeBehind: 1,
         qualityAnime: 3,
-        formatAnime:3,
+        formatAnime:1,
         dlNumber:1,
         delayRequestData:2,
         delayRequestDl:3,

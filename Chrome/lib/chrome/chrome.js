@@ -78,6 +78,8 @@ var variables = {
 var ani_url = 'https://graphql.anilist.co',
     options = {
         method: 'POST',
+        cache: 'no-cache',
+        credentials: 'same-origin',
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
@@ -93,6 +95,8 @@ var mal_ani_variables = {
 var mal_ani_url = 'https://graphql.anilist.co',
     mal_ani_options = {
         method: 'POST',
+        cache: 'no-cache',
+        credentials: 'same-origin',
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
@@ -110,6 +114,10 @@ var user_options;
 var oldUserOptions = {};
 var viewRefresh = false;
 var viewIsLoading = false;
+var backgroundError = false;
+var backgroundErrorMsg = "";
+var remainingFetch = 99;
+var canFetchData = true;
 
 function getUserOptionsValue(key) {
     let val = user_options[key];
@@ -254,6 +262,15 @@ function get_animes_sort_by_status() {
     });
 }
 async function requestData() {
+    if(canFetchData && remainingFetch <= 0) {
+        canFetchData = false;
+        setTimeout(() => {canFetchData = true; remainingFetch = 99;},70 * 1000);
+    }
+    if(!canFetchData) {
+        console.log("Fetch abort due to rate limit");
+        return false;
+    } 
+
     console.log("Requesting data...");
     if (user.type === 'anilist') {
         return fetch(ani_url, options).then(handleResponse)
@@ -301,6 +318,7 @@ async function requestData() {
     }
 
     function handleResponse(response) {
+        remainingFetch = response.headers.get("X-RateLimit-Remaining");
         return response.json().then(function (json) {
             return response.ok ? json : Promise.reject(json);
         });
@@ -342,12 +360,24 @@ async function requestData() {
             if (entry.media.nextAiringEpisode && entry.progress === (entry.media.nextAiringEpisode.episode - 1)) {
             }*/
         });
+        if(backgroundError === true) {
+            viewRefresh = true;
+        }
+        backgroundError = false;
+        backgroundErrorMsg = "";
         updateBadge();
         return entries;
     }
 
     function handleError(error) {
-        console.error(error);
+        console.error({error, time: Date.now()});
+        var msg = `An error occured : \n`;
+        error.errors.forEach((e) => {
+            msg += `${e.message} (${e.status})\n`;
+        });
+        msg += "Please wait 1 minute before retries.";
+        backgroundError = true;
+        backgroundErrorMsg = msg;
         return null;
     }
 }
@@ -357,7 +387,9 @@ async function searchDlLinks(title, ep, lang, quality, format) {
     let query = title.replace(/\s/gmi,"+");
     let category = '1_0';
     let opt = {
-        method: 'GET'
+        method: 'GET',
+        cache: 'no-cache',
+        credentials: 'same-origin'
     }
     if(lang === null) {
         category= '1_4';
@@ -392,17 +424,22 @@ async function searchDlLinks(title, ep, lang, quality, format) {
         .then(txt => {
             let html = txt;
             let tr = $(html).find("table:first-child tbody tr");
+            let domain = 'https://nyaa.si';
             $(tr).each(function() {
                 if(!findStrict) {
                     let name = $(this).find("td:nth-child(2) a:not(.comments)").text();
                     let magnet = $(this).find("td:nth-child(3) a:nth-child(2)").attr("href");
+                    let dlLink = domain + $(this).find("td:nth-child(3) a:nth-child(1)").attr("href");
+                    let mainPage = domain + $(this).find("td:nth-child(2) a:nth-child(2)").attr("href");
+                    let up = $(this).find("td:nth-child(6)").text();
+                    let down = $(this).find("td:nth-child(7)").text();
                     if(name) {
                         if(name.match(regexStrict) && name.match(regexEpisode)) {
                             if(!returnObj) {
-                                returnObj = {name: name, magnet: magnet, strict: false}
+                                returnObj = {name, magnet, dlLink, mainPage, strict: false, up, down}
                             }
                         } else if(name.match(regexEpisode)) {
-                            returnObj = {name: name, magnet: magnet, strict: true}
+                            returnObj = {name, magnet, dlLink, mainPage, strict: true, up, down}
                             findStrict = true;
                         }
                     }
@@ -595,7 +632,7 @@ function updateBadge() {
     if(nbTotal === 0) {
         color = "#3b3b3b";
     }
-    else if (nbTotalDl < nbTotal * .25) {
+    else if (nbTotalDl <= nbTotal * .25) {
         color = "#db1414";
     } else if (nbTotalDl > nbTotal * .25 && nbTotalDl < nbTotal * .5) {
         color = "#c4640a";
@@ -633,6 +670,14 @@ function clearAnimesData() {
 }
 function viewHaveToBeLoading() {
     return viewIsLoading;
+}
+
+function viewHaveToShowError() {
+    return backgroundError;
+}
+
+function getErrorMsg() {
+    return backgroundErrorMsg;
 }
 
 getStorage('user', (storage) => {
