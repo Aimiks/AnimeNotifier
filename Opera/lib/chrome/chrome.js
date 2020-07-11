@@ -262,6 +262,7 @@ function get_animes_sort_by_status() {
     });
 }
 async function requestData() {
+    console.log(remainingFetch);
     if(canFetchData && remainingFetch <= 0) {
         canFetchData = false;
         setTimeout(() => {canFetchData = true; remainingFetch = 99;},70 * 1000);
@@ -308,8 +309,11 @@ async function requestData() {
                             })
                         };
                         data = await fetch(mal_ani_url, mal_ani_options).then(handleResponse).catch(handleError);
-                        finalData.data.MediaListCollection.lists[0].entries.push({id: data.data.Media.id, progress: a.watched_episodes, media: data.data.Media});
-                        await new Promise(r => setTimeout(r, mals_anime.length >= 90 ? 666 : 100));
+                        if(remainingFetch > 0) {
+                            console.log("[MAL] Fetch abort due to rate limit");
+                            finalData.data.MediaListCollection.lists[0].entries.push({id: data.data.Media.id, progress: a.watched_episodes, media: data.data.Media});
+                            await new Promise(r => setTimeout(r, mals_anime.length >= 90 ? 666 : 100));                      
+                        }
                     };
                     handleData(finalData);
                     console.log(finalData);
@@ -333,14 +337,16 @@ async function requestData() {
         }
         entries.forEach(entry => {
             if(entry.media.nextAiringEpisode === null) {
-                if(getUserOptionsValue("episodeBehind")===null || entry.progress >= (entry.media.episodes - getUserOptionsValue("episodeBehind")) ) {
-                    let nextEp = entry.media.airingSchedule.nodes.find(n => n.episode === entry.progress + 1)
+                // If userpref is any anime with unlimited episode behind
+                // Or the remaining episodes to watch match the userpref
+                if(getUserOptionsValue("episodeBehind")===null || (entry.progress >= (entry.media.episodes - getUserOptionsValue("episodeBehind")) )) {
+                    let nextEp = entry.media.airingSchedule.nodes.find(n => n.episode === entry.progress + 1);
                     let dateDiff;
                     if (nextEp) {
                         let nextEpAir = new Date(nextEp.airingAt * 1000);
                         dateDiff = (Date.now() - nextEpAir) / (1000 * 3600 * 24);
                     }
-                    add_anime({ id: entry.media.id, time: 0, status: 'UP', progress: entry.progress, behind: entry.media.episodes - entry.progress, new: dateDiff && dateDiff < 7, media: entry.media });
+                    add_anime({ id: entry.media.id, time: 0, status: 'UP', progress: entry.progress, behind: entry.media.episodes ? entry.media.episodes - entry.progress : 'unk', new: dateDiff && dateDiff < 7, media: entry.media });
                 }
             } else if(entry.progress === (entry.media.nextAiringEpisode.episode - 1)) {
                 var diff = entry.media.nextAiringEpisode.timeUntilAiring;
@@ -372,9 +378,13 @@ async function requestData() {
     function handleError(error) {
         console.error({error, time: Date.now()});
         var msg = `An error occured : \n`;
-        error.errors.forEach((e) => {
-            msg += `${e.message} (${e.status})\n`;
-        });
+        if(error.errors) {
+            error.errors.forEach((e) => {
+                msg += `${e.message} (${e.status})\n`;
+            });
+        } else {
+            msg += `${error.message}\n`;
+        }
         msg += "Please wait 1 minute before retries.";
         backgroundError = true;
         backgroundErrorMsg = msg;
@@ -417,6 +427,8 @@ async function searchDlLinks(title, ep, lang, quality, format) {
     let regexStrict = new RegExp(regexStrictQuery, 'gmi');
     // regex to get string that contain EP or 0+EP
     let regexEpisode = new RegExp(`\\D${ep}\\D|\\D0${ep}\\D`,'gmi');
+    // regex to match {ep} bits like '10 bits'
+    let regexBits = new RegExp(`\\D${ep}bit|\\D${ep}\\Dbit`);
     let returnObj = null;
     let findStrict = false;
     return fetch(`https://nyaa.si/?f=1&c=${category}&q=${query}&p=1&o=desc&s=seeders`, opt)
@@ -434,11 +446,11 @@ async function searchDlLinks(title, ep, lang, quality, format) {
                     let up = $(this).find("td:nth-child(6)").text();
                     let down = $(this).find("td:nth-child(7)").text();
                     if(name) {
-                        if(name.match(regexStrict) && name.match(regexEpisode)) {
+                        if(name.match(regexStrict) && name.match(regexEpisode) && !name.match(regexBits)) {
                             if(!returnObj) {
                                 returnObj = {name, magnet, dlLink, mainPage, strict: false, up, down}
                             }
-                        } else if(name.match(regexEpisode)) {
+                        } else if(name.match(regexEpisode) && !name.match(regexBits)) {
                             returnObj = {name, magnet, dlLink, mainPage, strict: true, up, down}
                             findStrict = true;
                         }

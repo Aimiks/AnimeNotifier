@@ -1,6 +1,6 @@
 var svgMagnet = `<?xml version="1.0" encoding="iso-8859-1"?>
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 512.001 512.001" style="enable-background:new 0 0 512.001 512.001;" xml:space="preserve">
+	 viewBox="0 0 512.001 512.001" xml:space="preserve">
 <g>
 	<g>
 		<path d="M488.193,279.164l-63.843-63.843c-1.875-1.875-4.419-2.929-7.071-2.929c-2.652,0-5.196,1.054-7.071,2.929L247.257,378.272
@@ -118,7 +118,7 @@ var svgMagnet = `<?xml version="1.0" encoding="iso-8859-1"?>
 var svgPage = `<?xml version="1.0" encoding="iso-8859-1"?>
 <!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve">
+	 viewBox="0 0 512 512" xml:space="preserve">
 <path style="fill:#838D92;" d="M222.79,10.006L212.5,0.304l-10.29,9.702c-1.417,1.336-34.71,33.272-34.71,80.914v15h30v61.891h30
 	V105.92h30v-15C257.5,43.278,224.207,11.342,222.79,10.006z"/>
 <path style="fill:#4F565B;" d="M377.5,90.92c0-47.642-33.293-79.578-34.71-80.914L332.5,0.304l-10.29,9.702
@@ -171,7 +171,7 @@ var svgPage = `<?xml version="1.0" encoding="iso-8859-1"?>
 `;
 var svgDl = `<?xml version="1.0" encoding="iso-8859-1"?>
 <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve">
+	 viewBox="0 0 512 512" xml:space="preserve">
 <g>
 	<g>
 		<g>

@@ -26,26 +26,36 @@ function dateToCountDown(sec) {
     return `${d}d ${h}h ${m}m ${s}s`;
 }
 
+/**
+ * Draw the part of the view based on the entry
+ * @param {*} entry : anime entry
+ */
 function draw(entry) {
     let div_infos = "";
-    let animeLine = $(`.animeLine[data-id=${entry.id}]`);
+    // Get existing anime line
+    let animeLine = $(`.animeLine[data-id=${entry.media.id}]`);
     let line_exist = animeLine.length !== 0;
+    // Remove content of the line
     $(`.animeLine[data-id=${entry.media.id}] > *`).remove();
+    // We create the line if there is none for this entry
     if(!line_exist) {
         animeLine = $(`<div data-id=${entry.media.id} class='animeLine ${entry.status === "AIRING" ? "airing" : "up"} ${(entry.dl && entry.dl.length) ? 'withDl' : ''}'></div>`);
     }
+    // next episode is the nextAiringEpisode or the actual entry progress + 1
     let nextEp = entry.media.nextAiringEpisode ? entry.media.nextAiringEpisode.episode : entry.progress+1;
     if(entry.status === 'AIRING') {
         var diff = entry.time;
         var dateAiringString = dateToCountDown(diff);
         div_infos = `<div data-id=${entry.media.id} class='animeCountDown'>${dateAiringString}</div>`;
     } else if(entry.status === "UP") {
+        // If the entry has a "UP" status the nextEp is the user progress + 1
         nextEp = entry.progress+1;
+        // We have download links
         if(entry.dl && entry.dl.length) {
             div_infos = `<div data-id=${entry.media.id} class='animeIsUpWithDl'>`;
             entry.dl.forEach((dl,ind) => {
-                // maximum is 3 atm
-                if(ind<=2) {
+                // maximum is 3 atm but only 2 bc of the design
+                if(ind<2) {
                     div_infos += `<div class='downloadInteractionContainer'>`;
                     var notStrictClass = dl.strict ? '' : 'notStrict ';
                     var title = dl.strict ? dl.name : `Result isn't strict. This can lead to an anime with a similar name.\nPlease verify the name before downloading.\n\n${dl.name}`;
@@ -56,7 +66,7 @@ function draw(entry) {
                         <span title="Ratio up" class="upRatio">${dl.up}</span><span title="Ratio down" class="downRatio">${dl.down}</span>
                     </div>`; 
 
-                    div_infos += `</div'>`;
+                    div_infos += `</div>`;
                 }
 
             });
@@ -65,11 +75,12 @@ function draw(entry) {
             div_infos = `<div data-id=${entry.media.id} class='animeIsUp'>Episode up<br>Searching links... </div>`;
         }
     }
+    // Draw badges (ep behind, new, ep number...)
     let badges = $(`<div class='badges'></div>`).append(`<div class='epNumber'>${nextEp}</div>`);
     if(entry.new) {
         badges.append($(`<div class='new'>New</div>`));
     } else if(entry.behind) {
-        badges.append($(`<div class='behind'>${entry.behind} ep. behind</div>`));
+        badges.append($(`<div class='behind'>${entry.behind}<span class='textBehind'>&nbsp;ep. behind</span></div>`));
     }
     $(animeLine)
     .append($(`<div class='infosContainer' style='background-image:url(${entry.media.coverImage.extraLarge})'></div>`)
@@ -93,8 +104,8 @@ function draw(entry) {
         $("#animesContainer").append(animeLine);
     }
 }
-function initAnimes() {
-    console.log("InitAnimes...");
+function initView() {
+    console.log("initView...");
     refresh();
 }
 function updateCoutDowns() {
@@ -115,6 +126,10 @@ function decreaseCountDowns() {
         }
     });
 }
+/**
+ * Return true if the shown data are deprecated
+ * @param {*} newAnimesData 
+ */
 function isOldDataDeprecated(newAnimesData) {
     if(oldAnimesData.length !== newAnimesData.length) {
         return true;
@@ -149,6 +164,14 @@ function refresh() {
     $("#refresh").text(oldText);
     $(".dlButton").on('click',function() {
         extension.openLink($(this).attr("href"));
+    });
+    let nbAnimeLine = $(".animeLine").length;
+    let animGlobalTime = 1;
+    $(".animeLine").each(function(ind) {
+        if(ind%2) {
+            $(this).css({"animation-name":"animeApparitionReverse"});          
+        }
+        $(this).css({"animation-delay":(animGlobalTime/nbAnimeLine)*(ind+1) +'s'});
     });
 }
 function getUserOptionString(key, val) {
@@ -262,47 +285,73 @@ function clearError() {
     $(".error").remove();
 }
 
+/**
+ * Init function
+ */
 function init() {
     console.log("Init...");
+    // Put a loading screen if we need
     if(extension.viewHaveToBeLoading()) {
         $(".loading").removeClass("hide");
     } else {
         $(".loading").addClass("hide");
     }
+    // Clear old intervals
     intervals.forEach( e => {
         clearInterval(e);
     });
+    // Get user infos
     extension.getStorage('user', async (res)=> {
+        // We have a user
         if(res.user) {
             $("#firstPage").addClass("hide");
             $("#main").addClass("hide");
+            // If we're not already initializing the data
             if(!extension.isInit() && extension.isInit() !== 'pending') {
+                // Initialize the data
                 await extension.init();
             } else {
+                // Or we get fresh data
                 extension.requestData();
             }
+            // Fill userName field
             $("#userName").text(res.user.userName);
+            $("#userName").on('click',function() {
+                if(res.user.type === 'anilist') {
+                    extension.openLink(`https://anilist.co/user/${res.user.userName}/animelist`);
+                } else {
+                    extension.openLink(`https://myanimelist.net/animelist/${res.user.userName}`);
+                }
+            });
             drawUserOptions();
+            // Hide the "login" page
             $("#main").removeClass("hide");
-            initAnimes();
+            // Initialize the view
+            initView();
+            // --- Start the differents async function ---
             intervals.push(setInterval( ()=> {
+                // decrese countdowns of the airing animes
                 decreaseCountDowns();
             }, 1000));
             intervals.push(setInterval( ()=> {
+                // We check if we need to refresh the view because of the data
                 if(!(extension.viewHaveToBeLoading() || extension.viewHaveToRefresh()) && isOldDataDeprecated(extension.get_animes_data())) {
                     refresh();
                 }
             }, 5000));
             intervals.push(setInterval( () => {
+                // We check if we have to refresh the view
                 if(extension.viewHaveToRefresh()) {
                     drawUserOptions();
                     refresh();
                     extension.viewHaveRefresh();
                 }
             },1000));
+            // Every minute we update the progress BG
             intervals.push(setInterval( () => {
                 updateGrayScaleBG();
             }, 60000));
+            // Every second we check if we have an error and show it if necessary
             intervals.push(setInterval( () => {
                  if(extension.viewHaveToShowError()) {
                     showError(extension.getErrorMsg());
@@ -310,8 +359,11 @@ function init() {
                     clearError();
                 }
             }, 1000));
-            
-        } else {
+            // --- END async func ---
+        } 
+        // We do not have a user
+        else {
+            // Show the login page
             $("#firstPage").removeClass("hide");
             $("#main").addClass("hide");
             $(".userInfos").addClass("hide");
@@ -378,4 +430,6 @@ $(function() {
             }
         }
     },100)
+
+    
 });
