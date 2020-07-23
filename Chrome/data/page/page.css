@@ -1,263 +1,340 @@
 html {
-    height: 100vh;
+  height: 100vh;
+  overflow-x: hidden;
 }
-html, body {
-    padding: 0;
-    margin: 0;
-    min-width: 380px;
-    min-height: 600px;
-    background: rgb(10,10,20);
+html,
+body {
+  padding: 0;
+  margin: 0;
+  min-width: 380px;
+  min-height: 600px;
+  background: rgb(10, 10, 20);
 }
 body {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
 }
 body * {
-    box-sizing: border-box;   
-    font-family: 'Didact Gothic', Arial, Helvetica, sans-serif;
+  box-sizing: border-box;
+  font-family: "Didact Gothic", Arial, Helvetica, sans-serif;
 }
 a {
-    color: white;
+  color: white;
 }
 .hide {
-    display: none !important;
+  display: none !important;
 }
 .loading {
-    height: 100%;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    position: absolute;
-    background-color: inherit;
-    z-index: 99;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  position: absolute;
+  background-color: inherit;
+  z-index: 99;
 }
 #animesContainer {
-    display: flex;
-    flex-direction: column;
-    color: white;
-    text-align: center;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  flex-direction: column;
+  color: white;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 .animeLine {
-    display: flex;
-    flex-direction: row;
-    margin-bottom: 10px;
-    height: 120px;
-    border-radius: 5px;
-    width: 90%;
-    position: relative;
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 10px;
+  height: 120px;
+  min-height: 100px;
+  border-radius: 5px;
+  width: 90%;
+  position: relative;
+  animation: animeApparition 0.85s cubic-bezier(0.18, 0.89, 0.32, 1.28) 0s 1
+    backwards;
 }
 .animeLine .animeImg img {
-    width: 75px;
-    height: 75px;
-    border-radius: 100%;;
+  width: 75px;
+  height: 75px;
+  border-radius: 100%;
 }
 .animeLine .infosContainer {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    justify-content: space-between;
-    align-items: center;
-    position: relative;
-    background-position: right;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  background-position: right;
+  background-size: 0%;
 }
 .animeLine .infosContainer .bgContainer {
-    background-position: inherit;
-    background-image:inherit;
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    filter: brightness(.8);
-    transition: brightness .1s ease-in;
-
+  background-position: inherit;
+  background-image: inherit;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  filter: brightness(0.8);
+  transition: brightness 0.1s ease-in;
 }
 .animeLine.airing .infosContainer .bg {
-    background-position: inherit;
-    background-image:inherit;
-    position: absolute;
-    top: 0;
-    right: 0;
-    z-index: 1;
-    height: 100%;
-    width: 100%;
-    filter: grayscale(1) invert(1);
+  background-position: inherit;
+  background-image: inherit;
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1;
+  height: 100%;
+  width: 100%;
+  filter: grayscale(1) invert(1);
 }
-.animeLine:hover  .infosContainer .bgContainer{
-    filter: brightness(1);
+.animeLine:hover .infosContainer .bgContainer {
+  filter: brightness(1);
 }
-/*.animeLine .infosContainer .bg::before {
-    background-image:inherit;
-    background-position: inherit;
-    content: " ";
-    width : 100%;
-    height : 100%;
-    position: absolute;
-    left:0;
-    top:0;
-    filter: grayscale(0);
 
-}*/
-@keyframes animateBgBlur {
-    0% {background-position: 100% 50%;}
-    25% {background-position: 50% 0%;}
-    50% {background-position: 0% 50%;}
-    75% {background-position: 50% 100%;}
-    100% {background-position: 100% 50%;}
-  }
-
-  @keyframes animateBgBlurSmall {
-    0% {background-position: 80% 50%;}
-    25% {background-position: 50% 20%;}
-    50% {background-position: 20% 50%;}
-    75% {background-position: 50% 80%;}
-    100% {background-position: 80% 50%;}
-  }
 .animeLine .infosContainer .blurBg {
-    background-position: inherit;
-    background-image:inherit;
-    position: absolute;
-    top: 0;
-    right: 0;
-    height: 100%;
-    width: 100%;
-    filter: blur(0px);
-    -webkit-filter: blur(0px); 
-    -moz-filter: blur(0px);
-    -o-filter: blur(0px); 
-    -ms-filter: blur(0px); 
+  background-position: inherit;
+  background-image: inherit;
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
+  filter: blur(0px);
+  -webkit-filter: blur(0px);
+  -moz-filter: blur(0px);
+  -o-filter: blur(0px);
+  -ms-filter: blur(0px);
 }
 .animeLine.up.withDl .infosContainer .blurBg {
-    filter: blur(6px) sepia(1) saturate(4) hue-rotate(65deg);
-    -webkit-filter: blur(6px) sepia(1) saturate(4) hue-rotate(65deg);
-    -moz-filter: blur(6px) sepia(1) saturate(4) hue-rotate(65deg);
-    -o-filter: blur(6px) sepia(1) saturate(4) hue-rotate(65deg);
-    -ms-filter: blur(6px) sepia(1) saturate(4) hue-rotate(65deg);
-    animation-name: animateBgBlurSmall;
-    animation-duration: 50s;
-    animation-iteration-count: infinite;
-    animation-timing-function: linear;
+  filter: blur(6px) sepia(1) saturate(4) hue-rotate(65deg);
+  -webkit-filter: blur(6px) sepia(1) saturate(4) hue-rotate(65deg);
+  -moz-filter: blur(6px) sepia(1) saturate(4) hue-rotate(65deg);
+  -o-filter: blur(6px) sepia(1) saturate(4) hue-rotate(65deg);
+  -ms-filter: blur(6px) sepia(1) saturate(4) hue-rotate(65deg);
+  animation-name: animateBgBlurSmall;
+  animation-duration: 50s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
 }
 .animeLine:hover .infosContainer .blurBg {
-    filter: blur(8px);
-    -webkit-filter: blur(8px); 
-    -moz-filter: blur(8px);
-    -o-filter: blur(8px); 
-    -ms-filter: blur(8px);
-    animation-name: animateBgBlur;
-    animation-duration: 25s;
-    animation-iteration-count: infinite;
-    animation-timing-function: linear;
-    top: 1px;
+  filter: blur(8px);
+  -webkit-filter: blur(8px);
+  -moz-filter: blur(8px);
+  -o-filter: blur(8px);
+  -ms-filter: blur(8px);
+  animation-name: animateBgBlur;
+  animation-duration: 25s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+  top: 1px;
 }
 .animeLine .infosContainer .bgContainer::after {
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 1;
-    height: 100%;
-    width: 100%;
-    box-shadow: inset 1px 1px 40px 1px black;
-    content: '';
-    transition: all .1s ease-in;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  height: 100%;
+  width: 100%;
+  box-shadow: inset 1px 1px 40px 1px black;
+  content: "";
+  transition: all 0.1s ease-in;
 }
 .animeLine:hover .infosContainer .bgContainer::after {
-    box-shadow: inset 1px 1px 10px 1px black;
+  box-shadow: inset 1px 1px 10px 1px black;
 }
 .infosContainer .top {
-    display: flex;
-    height: 100%;
-    width: 100%;
-    position: relative;
-    z-index: 2;
-    flex-direction: column;
+  display: flex;
+  height: 100%;
+  width: 100%;
+  position: relative;
+  z-index: 2;
+  flex-direction: column;
 }
-#userOptions, .infosContainer .top .badges {
-    display: flex;
-    justify-content: flex-end;
+#userOptions,
+.infosContainer .top .badges {
+  display: flex;
+  justify-content: flex-end;
 }
-#userOptions > *, .infosContainer .top .badges > *{
-    background-color: rgb(95, 31, 197);
-    border-radius: 20px;
-    box-shadow: 1px 1px 10px black;
-    margin: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 10px;
-    height: 20px;
-    min-width: 20px;
+#userOptions > *,
+.infosContainer .top .badges > * {
+  background-color: rgb(95, 31, 197);
+  border-radius: 20px;
+  box-shadow: 1px 1px 10px black;
+  margin: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  height: 20px;
+  min-width: 20px;
 }
 .infosContainer .top .badges .epNumber {
-    font-family: 'Rajdhani', Arial, Helvetica, sans-serif;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 2;
-    padding: 5px;
+  font-family: "Rajdhani", Arial, Helvetica, sans-serif;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  padding: 5px;
 }
 .infosContainer .top .badges .new {
-    background-color: rgb(60, 141, 235);
+  background-color: rgb(60, 141, 235);
 }
 .infosContainer .top .badges .behind {
-    background-color: rgb(224, 49, 49);
+  background-color: rgb(224, 49, 49);
+  transition: max-width 0.25s ease-in-out;
+  max-width: 20px;
+  cursor: default;
 }
-.infosContainer .animeTitle, .infosContainer .animeCountDown, .infosContainer .animeIsUp, .infosContainer .animeIsUpWithDl {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    z-index: 2;
+.infosContainer .top .badges .behind:hover {
+  max-width: 100px;
+}
+.infosContainer .top .badges .behind .textBehind {
+  width: 20px;
+  white-space: nowrap;
+  overflow: hidden;
+  transition: width 0.25s ease-in-out;
+  text-align: left;
+}
+.infosContainer .top .badges .behind:hover .textBehind {
+  width: 100%;
+}
+.infosContainer .animeTitle,
+.infosContainer .animeCountDown,
+.infosContainer .animeIsUp,
+.infosContainer .animeIsUpWithDl {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  position: relative;
+  z-index: 2;
 }
 
 .infosContainer .animeTitle {
-    font-size: 16px;
-    background-color: rgba(0,0,0,0.75);
-    width: 100%;
-    padding: 5px 30px;
-    text-overflow: ellipsis;
-    display: inline-block;
-    white-space: nowrap;
-    overflow: hidden;
-    text-align: center;
+  font-size: 16px;
+  background-color: rgba(0, 0, 0, 0.75);
+  width: 100%;
+  padding: 5px 30px;
+  text-overflow: ellipsis;
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-align: center;
 }
 
 .infosContainer .animeCountDown {
-    font-size: 15px;
-    background-color: rgba(255, 255, 255, 0.75);
-    width: 60%;
-    border-top-right-radius: 50%;
-    border-top-left-radius: 50%;
-    height: 15%;
-    color: black;
-    font-weight: bold;
-    transition: all .2s ease;
-    font-family: 'Rajdhani', Arial, Helvetica, sans-serif;
+  font-size: 15px;
+  background-color: rgba(255, 255, 255, 0.75);
+  width: 60%;
+  border-top-right-radius: 50%;
+  border-top-left-radius: 50%;
+  height: 15%;
+  color: black;
+  font-weight: bold;
+  transition: all 0.2s ease;
+  font-family: "Rajdhani", Arial, Helvetica, sans-serif;
 }
 .infosContainer .animeCountDown:hover {
-    height: 30%;
-    font-size: 24px;
-    width: 70%;
-    cursor: default;
+  height: 30%;
+  font-size: 24px;
+  width: 70%;
+  cursor: default;
 }
 .infosContainer .animeIsUp {
-    width: 60%;
-    border-top-right-radius: 50%;
-    border-top-left-radius: 50%;
-    background-color: rgba(39, 54, 107, 0.9);
+  width: auto;
+  background-color: #424aa9;
+  margin-bottom: 5px;
+  height: 35px;
+  box-shadow: black 1px 1px 10px 1px;
+  width: 120px;
+  border-radius: 30px;
+  overflow: hidden;
+  position: relative;
 }
+/*.infosContainer .animeIsUp::before {
+  content: "";
+  position: absolute;
+  z-index: -2;
+  left: 0;
+  top: -52.5px;
+  width: 130px;
+  height: 130px;
+  background-repeat: no-repeat;
+  background-size: 50% 50%, 50% 50%;
+  background-position: 0 0, 100% 0, 100% 100%, 0 100%;
+  background-image: linear-gradient(
+      45deg,
+      rgb(216, 141, 255) 20%,
+      rgb(0, 225, 255) 80%
+    ),
+    linear-gradient(#424aa9, #424aa9), linear-gradient(#424aa9, #424aa9),
+    linear-gradient(#424aa9, #424aa9);
+  animation: rotate 1s cubic-bezier(0.12, 0.94, 0.4, 1.01) infinite;
+}*/
+.infosContainer .animeIsUp::before {
+  content: "";
+  position: absolute;
+  z-index: -2;
+  left: 50%;
+  top: 50%;
+  width: 50%;
+  height: 250%;
+  -webkit-transform-origin: 0 0;
+  transform-origin: 0 0;
+  background-image: linear-gradient(
+    45deg,
+    rgb(216, 141, 255) 40%,
+    rgb(0, 225, 255)
+  );
+  animation: rotate 1s cubic-bezier(0.12, 0.94, 0.4, 1.01) infinite;
+}
+.infosContainer .animeIsUp::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: 3px;
+  top: 3px;
+  width: calc(100% - 6px);
+  height: calc(100% - 6px);
+  background: inherit;
+  border-radius: 30px;
+}
+/*
+.infosContainer .animeIsUp::after,
+.infosContainer .animeIsUp::before {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  content: "";
+  z-index: -1;
+  box-shadow: inset 0 0 0 2px;
+  animation: clipMe 8s linear infinite;
+  color: skyblue;
+  box-sizing: border-box;
+}
+.infosContainer .animeIsUp::before {
+  animation-delay: -4s;
+}
+.infosContainer .animeIsUp:hover::before,
+.infosContainer .animeIsUp:hover::after {
+  background-color: rgba(255, 0, 0, 0.5);
+}*/
 .infosContainer .animeIsUpWithDl {
-    width: 100%;
-    height: 30%;
-}/*
+  width: 100%;
+  height: 30%;
+} /*
 .infosContainer .dlLink {
     text-decoration: none;
     width: 80%;
@@ -280,479 +357,572 @@ a {
     filter: brightness(1.2);
 }*/
 #firstPage {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 #main {
-    height: 100%;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 .userInfos {
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: white;
-    flex-direction: column;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  flex-direction: column;
 }
 .userInfos span {
-    font-size: 24px;
-    color: white;
-    margin-bottom: 10px;
+  font-size: 24px;
+  color: white;
+  margin-bottom: 10px;
 }
-.userNameInput{
-    font-size: 15px;
-    width: 60%;
-    margin-bottom: 10px;
+.userNameInput {
+  font-size: 15px;
+  width: 60%;
+  margin-bottom: 10px;
 }
 #userName {
-    color: white;
-    font-size: 18px;
-    text-align: center;
-    width: 80%;
-    border-radius: 10px;
-    align-self: center;
-    background-color: rgb(95, 31, 197);
-    margin-top: 10px;
+  color: white;
+  font-size: 18px;
+  text-align: center;
+  width: 80%;
+  border-radius: 10px;
+  align-self: center;
+  background-color: rgb(95, 31, 197);
+  margin-top: 10px;
+  text-decoration: underline;
+  cursor: pointer;
 }
 #optionBar {
-    display: flex;
-    justify-content: flex-end;
+  display: flex;
+  justify-content: flex-end;
 }
 #optionBar > * {
-    background: transparent;
-    color: white;
-    margin: 5px;
-    border-radius: 20px;
-    cursor: pointer;
-    transition: all .2s ease;
-    border: none;
+  background: transparent;
+  color: white;
+  margin: 5px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
 }
 #optionBar > *:hover {
-    background-color: white;
-    color: black;
+  background-color: white;
+  color: black;
 }
 #userOptions {
-    justify-content: center;
-    margin-bottom: 10px;
+  justify-content: center;
+  margin-bottom: 10px;
 }
 #userOptions > * {
-    font-size: 10px;
-    color: white;
-    padding: 5px;
-    background: rgb(56, 101, 169);
+  font-size: 10px;
+  color: white;
+  padding: 5px;
+  background: rgb(56, 101, 169);
 }
 .choiceContainer {
-    width: 60%;
+  width: 60%;
 }
 .choiceContainer span {
-    font-size: 24px;
-    margin-bottom: 40px;
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  font-size: 24px;
+  margin-bottom: 40px;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-.choseAnilist,.choseMAL {
-    width: 100%;
-    height: 200px;
-    margin-bottom: 40px;
-    border: 1px solid white;
-    cursor: pointer;
-    padding: 40px;
+.choseAnilist,
+.choseMAL {
+  width: 100%;
+  height: 200px;
+  margin-bottom: 40px;
+  border: 1px solid white;
+  cursor: pointer;
+  padding: 40px;
 }
 .choseAnilist {
-    background-image: url("../img/Anilist.png");
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-color: inherit;
+  background-image: url("../img/Anilist.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: inherit;
 }
 .choseMAL {
-    background-image: url("../img/MAL.png");
-    background-color: inherit;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
+  background-image: url("../img/MAL.png");
+  background-color: inherit;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 .infos {
-    font-size: 11px;
-    color: rgb(255, 208, 0);
-    margin-bottom: 30px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
+  font-size: 11px;
+  color: rgb(255, 208, 0);
+  margin-bottom: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }
 .error {
-    color: red;
-    font-size: 20px;
-    padding: 20px;
+  color: red;
+  font-size: 20px;
+  padding: 20px;
 }
 
 .downloadInteractionContainer {
-    display: flex;
-    flex-direction: row;
-    margin: 0 5px;
-    margin-bottom: 10px;
-    width: 100px;
-    justify-content: space-between;
-    position: relative;
+  display: flex;
+  flex-direction: row;
+  margin: 0 5px;
+  margin-bottom: 10px;
+  width: 100px;
+  justify-content: space-between;
+  position: relative;
 }
 
 .downloadInteractionContainer .dlButton {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #424aa9;
-    border-radius: 50%;
-    width: 28px;
-    height: 28px;
-    box-shadow: 1px 1px 10px black;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #424aa9;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  box-shadow: 1px 1px 10px black;
 }
 
 .downloadInteractionContainer .dlButton.notStrict {
-    background: #7c5e25;
+  background: #7c5e25;
 }
 .downloadInteractionContainer .dlButton:hover {
-    filter: brightness(1.2);
+  filter: brightness(1.2);
 }
 .downloadInteractionContainer .dlPage {
-    background: #504069;
+  background: #504069;
 }
 .downloadInteractionContainer .dlButton svg {
-    height: 16px;
-    width: 16px;
-    box-sizing: border-box;
-    fill: white;
+  height: 16px;
+  width: 16px;
+  box-sizing: border-box;
+  fill: white;
 }
 
 .downloadInteractionContainer .ratio {
-    position: absolute;
-    width: 140px;
-    top: 8px;
-    left: -20px;
-    display:flex;
-    flex-direction: row;
-    justify-content: space-between;
-    font-size: 10px;
-    z-index: -1;
+  position: absolute;
+  width: 140px;
+  top: 8px;
+  left: -20px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  font-size: 10px;
+  z-index: -1;
 }
 
 .ratio > * {
-    border-radius: 20px;
-    min-width: 30px;
-    position: relative;
-    z-index: 1;
-
+  border-radius: 20px;
+  min-width: 30px;
+  position: relative;
+  z-index: 1;
 }
 
 .ratio .upRatio {
-    background-color: #266f28;
-    text-align: left;
-    padding-left: 3px;
-
+  background-color: #266f28;
+  text-align: left;
+  padding-left: 3px;
 }
 .ratio .downRatio {
-    background-color: red;
-    text-align: right;
-    padding-right: 3px;
+  background-color: red;
+  text-align: right;
+  padding-right: 3px;
 }
 
 /* GLITCH EFFECT */
 body {
---gap-horizontal: 10px;
---gap-vertical: 5px;
---time-anim: 4s;
---delay-anim: 2s;
---blend-mode-1: none;
---blend-mode-2: none;
---blend-mode-3: none;
---blend-mode-4: none;
---blend-mode-5: overlay;
---blend-color-1: transparent;
---blend-color-2: transparent;
---blend-color-3: transparent;
---blend-color-4: transparent;
---blend-color-5: #af4949;
+  --gap-horizontal: 10px;
+  --gap-vertical: 5px;
+  --time-anim: 4s;
+  --delay-anim: 2s;
+  --blend-mode-1: none;
+  --blend-mode-2: none;
+  --blend-mode-3: none;
+  --blend-mode-4: none;
+  --blend-mode-5: overlay;
+  --blend-color-1: transparent;
+  --blend-color-2: transparent;
+  --blend-color-3: transparent;
+  --blend-color-4: transparent;
+  --blend-color-5: #af4949;
 }
-.animeLine.airing  .glitch {
-	overflow: hidden;
-}
-
-.animeLine.airing  .glitch__img {
-	position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-	background: inherit;
-	background-color: var(--blend-color-1);
-	transform: translate3d(0,0,0);
-	background-blend-mode: var(--blend-mode-1);
+.animeLine.airing .glitch {
+  overflow: hidden;
 }
 
-.animeLine.airing .glitch__img:nth-child(n+2) {
-	opacity: 0;
+.animeLine.airing .glitch__img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: inherit;
+  background-color: var(--blend-color-1);
+  transform: translate3d(0, 0, 0);
+  background-blend-mode: var(--blend-mode-1);
 }
 
-.animeLine.airing .glitch__img:nth-child(n+2) {
-	animation-duration: var(--time-anim);
-	animation-delay: var(--delay-anim);
-	animation-timing-function: linear;
-	animation-iteration-count: infinite;
+.animeLine.airing .glitch__img:nth-child(n + 2) {
+  opacity: 0;
+}
+
+.animeLine.airing .glitch__img:nth-child(n + 2) {
+  animation-duration: var(--time-anim);
+  animation-delay: var(--delay-anim);
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
 }
 
 .animeLine.airing .glitch__img:nth-child(2) {
-	background-color: var(--blend-color-2);
-	background-blend-mode: var(--blend-mode-2);
-	animation-name: glitch-anim-1;
+  background-color: var(--blend-color-2);
+  background-blend-mode: var(--blend-mode-2);
+  animation-name: glitch-anim-1;
 }
 
 .animeLine.airing .glitch__img:nth-child(3) {
-	background-color: var(--blend-color-3);
-	background-blend-mode: var(--blend-mode-3);
-	animation-name: glitch-anim-2;
+  background-color: var(--blend-color-3);
+  background-blend-mode: var(--blend-mode-3);
+  animation-name: glitch-anim-2;
 }
 
 .animeLine.airing .glitch__img:nth-child(4) {
-	background-color: var(--blend-color-4);
-	background-blend-mode: var(--blend-mode-4);
-	animation-name: glitch-anim-3;
+  background-color: var(--blend-color-4);
+  background-blend-mode: var(--blend-mode-4);
+  animation-name: glitch-anim-3;
 }
 
 .glitch__img:nth-child(5) {
-	background-color: var(--blend-color-5);
-	background-blend-mode: var(--blend-mode-5);
-    animation-name: glitch-anim-flash;
-    opacity: 0;
+  background-color: var(--blend-color-5);
+  background-blend-mode: var(--blend-mode-5);
+  animation-name: glitch-anim-flash;
+  opacity: 0;
 }
 
 /* Animations */
 
 @keyframes glitch-anim-1 {
-	0% { 
-		opacity: 1;
-		transform: translate3d(var(--gap-horizontal),0,0);
-		-webkit-clip-path: polygon(0 2%, 100% 2%, 100% 5%, 0 5%);
-		clip-path: polygon(0 2%, 100% 2%, 100% 5%, 0 5%);
-	}
-	2% {
-		-webkit-clip-path: polygon(0 15%, 100% 15%, 100% 15%, 0 15%);
-		clip-path: polygon(0 15%, 100% 15%, 100% 15%, 0 15%);
-	}
-	4% {
-		-webkit-clip-path: polygon(0 10%, 100% 10%, 100% 20%, 0 20%);
-		clip-path: polygon(0 10%, 100% 10%, 100% 20%, 0 20%);
-	}
-	6% {
-		-webkit-clip-path: polygon(0 1%, 100% 1%, 100% 2%, 0 2%);
-		clip-path: polygon(0 1%, 100% 1%, 100% 2%, 0 2%);
-	}
-	8% {
-		-webkit-clip-path: polygon(0 33%, 100% 33%, 100% 33%, 0 33%);
-		clip-path: polygon(0 33%, 100% 33%, 100% 33%, 0 33%);
-	}
-	10% {
-		-webkit-clip-path: polygon(0 44%, 100% 44%, 100% 44%, 0 44%);
-		clip-path: polygon(0 44%, 100% 44%, 100% 44%, 0 44%);
-	}
-	12% {
-		-webkit-clip-path: polygon(0 50%, 100% 50%, 100% 20%, 0 20%);
-		clip-path: polygon(0 50%, 100% 50%, 100% 20%, 0 20%);
-	}
-	14% {
-		-webkit-clip-path: polygon(0 70%, 100% 70%, 100% 70%, 0 70%);
-		clip-path: polygon(0 70%, 100% 70%, 100% 70%, 0 70%);
-	}
-	16% {
-		-webkit-clip-path: polygon(0 80%, 100% 80%, 100% 80%, 0 80%);
-		clip-path: polygon(0 80%, 100% 80%, 100% 80%, 0 80%);
-	}
-	18% {
-		-webkit-clip-path: polygon(0 50%, 100% 50%, 100% 55%, 0 55%);
-		clip-path: polygon(0 50%, 100% 50%, 100% 55%, 0 55%);
-	}
-	20% {
-		-webkit-clip-path: polygon(0 70%, 100% 70%, 100% 80%, 0 80%);
-		clip-path: polygon(0 70%, 100% 70%, 100% 80%, 0 80%);
-	}
-	21.9% {
-		opacity: 1;
-		transform: translate3d(var(--gap-horizontal),0,0);
-	}
-	22%, 100% {
-		opacity: 0;
-		transform: translate3d(0,0,0);
-		-webkit-clip-path: polygon(0 0, 0 0, 0 0, 0 0);
-		clip-path: polygon(0 0, 0 0, 0 0, 0 0);
-	}
+  0% {
+    opacity: 1;
+    transform: translate3d(var(--gap-horizontal), 0, 0);
+    -webkit-clip-path: polygon(0 2%, 100% 2%, 100% 5%, 0 5%);
+    clip-path: polygon(0 2%, 100% 2%, 100% 5%, 0 5%);
+  }
+  2% {
+    -webkit-clip-path: polygon(0 15%, 100% 15%, 100% 15%, 0 15%);
+    clip-path: polygon(0 15%, 100% 15%, 100% 15%, 0 15%);
+  }
+  4% {
+    -webkit-clip-path: polygon(0 10%, 100% 10%, 100% 20%, 0 20%);
+    clip-path: polygon(0 10%, 100% 10%, 100% 20%, 0 20%);
+  }
+  6% {
+    -webkit-clip-path: polygon(0 1%, 100% 1%, 100% 2%, 0 2%);
+    clip-path: polygon(0 1%, 100% 1%, 100% 2%, 0 2%);
+  }
+  8% {
+    -webkit-clip-path: polygon(0 33%, 100% 33%, 100% 33%, 0 33%);
+    clip-path: polygon(0 33%, 100% 33%, 100% 33%, 0 33%);
+  }
+  10% {
+    -webkit-clip-path: polygon(0 44%, 100% 44%, 100% 44%, 0 44%);
+    clip-path: polygon(0 44%, 100% 44%, 100% 44%, 0 44%);
+  }
+  12% {
+    -webkit-clip-path: polygon(0 50%, 100% 50%, 100% 20%, 0 20%);
+    clip-path: polygon(0 50%, 100% 50%, 100% 20%, 0 20%);
+  }
+  14% {
+    -webkit-clip-path: polygon(0 70%, 100% 70%, 100% 70%, 0 70%);
+    clip-path: polygon(0 70%, 100% 70%, 100% 70%, 0 70%);
+  }
+  16% {
+    -webkit-clip-path: polygon(0 80%, 100% 80%, 100% 80%, 0 80%);
+    clip-path: polygon(0 80%, 100% 80%, 100% 80%, 0 80%);
+  }
+  18% {
+    -webkit-clip-path: polygon(0 50%, 100% 50%, 100% 55%, 0 55%);
+    clip-path: polygon(0 50%, 100% 50%, 100% 55%, 0 55%);
+  }
+  20% {
+    -webkit-clip-path: polygon(0 70%, 100% 70%, 100% 80%, 0 80%);
+    clip-path: polygon(0 70%, 100% 70%, 100% 80%, 0 80%);
+  }
+  21.9% {
+    opacity: 1;
+    transform: translate3d(var(--gap-horizontal), 0, 0);
+  }
+  22%,
+  100% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0);
+    -webkit-clip-path: polygon(0 0, 0 0, 0 0, 0 0);
+    clip-path: polygon(0 0, 0 0, 0 0, 0 0);
+  }
 }
 
 @keyframes glitch-anim-2 {
-	0% { 
-		opacity: 1;
-		transform: translate3d(calc(-1 * var(--gap-horizontal)),0,0);
-		-webkit-clip-path: polygon(0 25%, 100% 25%, 100% 30%, 0 30%);
-		clip-path: polygon(0 25%, 100% 25%, 100% 30%, 0 30%);
-	}
-	3% {
-		-webkit-clip-path: polygon(0 3%, 100% 3%, 100% 3%, 0 3%);
-		clip-path: polygon(0 3%, 100% 3%, 100% 3%, 0 3%);
-	}
-	5% {
-		-webkit-clip-path: polygon(0 5%, 100% 5%, 100% 20%, 0 20%);
-		clip-path: polygon(0 5%, 100% 5%, 100% 20%, 0 20%);
-	}
-	7% {
-		-webkit-clip-path: polygon(0 20%, 100% 20%, 100% 20%, 0 20%);
-		clip-path: polygon(0 20%, 100% 20%, 100% 20%, 0 20%);
-	}
-	9% {
-		-webkit-clip-path: polygon(0 40%, 100% 40%, 100% 40%, 0 40%);
-		clip-path: polygon(0 40%, 100% 40%, 100% 40%, 0 40%);
-	}
-	11% {
-		-webkit-clip-path: polygon(0 52%, 100% 52%, 100% 59%, 0 59%);
-		clip-path: polygon(0 52%, 100% 52%, 100% 59%, 0 59%);
-	}
-	13% {
-		-webkit-clip-path: polygon(0 60%, 100% 60%, 100% 60%, 0 60%);
-		clip-path: polygon(0 60%, 100% 60%, 100% 60%, 0 60%);
-	}
-	15% {
-		-webkit-clip-path: polygon(0 75%, 100% 75%, 100% 75%, 0 75%);
-		clip-path: polygon(0 75%, 100% 75%, 100% 75%, 0 75%);
-	}
-	17% {
-		-webkit-clip-path: polygon(0 65%, 100% 65%, 100% 40%, 0 40%);
-		clip-path: polygon(0 65%, 100% 65%, 100% 40%, 0 40%);
-	}
-	19% {
-		-webkit-clip-path: polygon(0 45%, 100% 45%, 100% 50%, 0 50%);
-		clip-path: polygon(0 45%, 100% 45%, 100% 50%, 0 50%);
-	}
-	20% {
-		-webkit-clip-path: polygon(0 14%, 100% 14%, 100% 33%, 0 33%);
-		clip-path: polygon(0 14%, 100% 14%, 100% 33%, 0 33%);
-	}
-	21.9% {
-		opacity: 1;
-		transform: translate3d(calc(-1 * var(--gap-horizontal)),0,0);
-	}
-	22%, 100% {
-		opacity: 0;
-		transform: translate3d(0,0,0);
-		-webkit-clip-path: polygon(0 0, 0 0, 0 0, 0 0);
-		clip-path: polygon(0 0, 0 0, 0 0, 0 0);
-	}
+  0% {
+    opacity: 1;
+    transform: translate3d(calc(-1 * var(--gap-horizontal)), 0, 0);
+    -webkit-clip-path: polygon(0 25%, 100% 25%, 100% 30%, 0 30%);
+    clip-path: polygon(0 25%, 100% 25%, 100% 30%, 0 30%);
+  }
+  3% {
+    -webkit-clip-path: polygon(0 3%, 100% 3%, 100% 3%, 0 3%);
+    clip-path: polygon(0 3%, 100% 3%, 100% 3%, 0 3%);
+  }
+  5% {
+    -webkit-clip-path: polygon(0 5%, 100% 5%, 100% 20%, 0 20%);
+    clip-path: polygon(0 5%, 100% 5%, 100% 20%, 0 20%);
+  }
+  7% {
+    -webkit-clip-path: polygon(0 20%, 100% 20%, 100% 20%, 0 20%);
+    clip-path: polygon(0 20%, 100% 20%, 100% 20%, 0 20%);
+  }
+  9% {
+    -webkit-clip-path: polygon(0 40%, 100% 40%, 100% 40%, 0 40%);
+    clip-path: polygon(0 40%, 100% 40%, 100% 40%, 0 40%);
+  }
+  11% {
+    -webkit-clip-path: polygon(0 52%, 100% 52%, 100% 59%, 0 59%);
+    clip-path: polygon(0 52%, 100% 52%, 100% 59%, 0 59%);
+  }
+  13% {
+    -webkit-clip-path: polygon(0 60%, 100% 60%, 100% 60%, 0 60%);
+    clip-path: polygon(0 60%, 100% 60%, 100% 60%, 0 60%);
+  }
+  15% {
+    -webkit-clip-path: polygon(0 75%, 100% 75%, 100% 75%, 0 75%);
+    clip-path: polygon(0 75%, 100% 75%, 100% 75%, 0 75%);
+  }
+  17% {
+    -webkit-clip-path: polygon(0 65%, 100% 65%, 100% 40%, 0 40%);
+    clip-path: polygon(0 65%, 100% 65%, 100% 40%, 0 40%);
+  }
+  19% {
+    -webkit-clip-path: polygon(0 45%, 100% 45%, 100% 50%, 0 50%);
+    clip-path: polygon(0 45%, 100% 45%, 100% 50%, 0 50%);
+  }
+  20% {
+    -webkit-clip-path: polygon(0 14%, 100% 14%, 100% 33%, 0 33%);
+    clip-path: polygon(0 14%, 100% 14%, 100% 33%, 0 33%);
+  }
+  21.9% {
+    opacity: 1;
+    transform: translate3d(calc(-1 * var(--gap-horizontal)), 0, 0);
+  }
+  22%,
+  100% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0);
+    -webkit-clip-path: polygon(0 0, 0 0, 0 0, 0 0);
+    clip-path: polygon(0 0, 0 0, 0 0, 0 0);
+  }
 }
 
 @keyframes glitch-anim-3 {
-	0% { 
-		opacity: 1;
-		transform: translate3d(0, calc(-1 * var(--gap-vertical)), 0) scale3d(-1,-1,1);
-		-webkit-clip-path: polygon(0 1%, 100% 1%, 100% 3%, 0 3%);
-		clip-path: polygon(0 1%, 100% 1%, 100% 3%, 0 3%);
-	}
-	1.5% {
-		-webkit-clip-path: polygon(0 10%, 100% 10%, 100% 9%, 0 9%);
-		clip-path: polygon(0 10%, 100% 10%, 100% 9%, 0 9%);
-	}
-	2% {
-		-webkit-clip-path: polygon(0 5%, 100% 5%, 100% 6%, 0 6%);
-		clip-path: polygon(0 5%, 100% 5%, 100% 6%, 0 6%);
-	}
-	2.5% {
-		-webkit-clip-path: polygon(0 20%, 100% 20%, 100% 20%, 0 20%);
-		clip-path: polygon(0 20%, 100% 20%, 100% 20%, 0 20%);
-	}
-	3% {
-		-webkit-clip-path: polygon(0 10%, 100% 10%, 100% 10%, 0 10%);
-		clip-path: polygon(0 10%, 100% 10%, 100% 10%, 0 10%);
-	}
-	5% {
-		-webkit-clip-path: polygon(0 30%, 100% 30%, 100% 25%, 0 25%);
-		clip-path: polygon(0 30%, 100% 30%, 100% 25%, 0 25%);
-	}
-	5.5% {
-		-webkit-clip-path: polygon(0 15%, 100% 15%, 100% 16%, 0 16%);
-		clip-path: polygon(0 15%, 100% 15%, 100% 16%, 0 16%);
-	}
-	7% {
-		-webkit-clip-path: polygon(0 40%, 100% 40%, 100% 39%, 0 39%);
-		clip-path: polygon(0 40%, 100% 40%, 100% 39%, 0 39%);
-	}
-	8% {
-		-webkit-clip-path: polygon(0 20%, 100% 20%, 100% 21%, 0 21%);
-		clip-path: polygon(0 20%, 100% 20%, 100% 21%, 0 21%);
-	}
-	9% {
-		-webkit-clip-path: polygon(0 60%, 100% 60%, 100% 55%, 0 55%);
-		clip-path: polygon(0 60%, 100% 60%, 100% 55%, 0 55%);
-	}
-	10.5% {
-		-webkit-clip-path: polygon(0 30%, 100% 30%, 100% 31%, 0 31%);
-		clip-path: polygon(0 30%, 100% 30%, 100% 31%, 0 31%);
-	}
-	11% {
-		-webkit-clip-path: polygon(0 70%, 100% 70%, 100% 69%, 0 69%);
-		clip-path: polygon(0 70%, 100% 70%, 100% 69%, 0 69%);
-	}
-	13% {
-		-webkit-clip-path: polygon(0 40%, 100% 40%, 100% 41%, 0 41%);
-		clip-path: polygon(0 40%, 100% 40%, 100% 41%, 0 41%);
-	}
-	14% {
-		-webkit-clip-path: polygon(0 80%, 100% 80%, 100% 75%, 0 75%);
-		clip-path: polygon(0 80%, 100% 80%, 100% 75%, 0 75%);
-	}
-	14.5% {
-		-webkit-clip-path: polygon(0 50%, 100% 50%, 100% 51%, 0 51%);
-		clip-path: polygon(0 50%, 100% 50%, 100% 51%, 0 51%);
-	}
-	15% {
-		-webkit-clip-path: polygon(0 90%, 100% 90%, 100% 90%, 0 90%);
-		clip-path: polygon(0 90%, 100% 90%, 100% 90%, 0 90%);
-	}
-	16% {
-		-webkit-clip-path: polygon(0 60%, 100% 60%, 100% 60%, 0 60%);
-		clip-path: polygon(0 60%, 100% 60%, 100% 60%, 0 60%);
-	}
-	18% {
-		-webkit-clip-path: polygon(0 100%, 100% 100%, 100% 99%, 0 99%);
-		clip-path: polygon(0 100%, 100% 100%, 100% 99%, 0 99%);
-	}
-	20% {
-		-webkit-clip-path: polygon(0 70%, 100% 70%, 100% 71%, 0 71%);
-		clip-path: polygon(0 70%, 100% 70%, 100% 71%, 0 71%);
-	}
-	21.9% {
-		opacity: 1;
-		transform: translate3d(0, calc(-1 * var(--gap-vertical)), 0) scale3d(-1,-1,1);
-	}
-	22%, 100% {
-		opacity: 0;
-		transform: translate3d(0,0,0);
-		-webkit-clip-path: polygon(0 0, 0 0, 0 0, 0 0);
-		clip-path: polygon(0 0, 0 0, 0 0, 0 0);
-	}
+  0% {
+    opacity: 1;
+    transform: translate3d(0, calc(-1 * var(--gap-vertical)), 0)
+      scale3d(-1, -1, 1);
+    -webkit-clip-path: polygon(0 1%, 100% 1%, 100% 3%, 0 3%);
+    clip-path: polygon(0 1%, 100% 1%, 100% 3%, 0 3%);
+  }
+  1.5% {
+    -webkit-clip-path: polygon(0 10%, 100% 10%, 100% 9%, 0 9%);
+    clip-path: polygon(0 10%, 100% 10%, 100% 9%, 0 9%);
+  }
+  2% {
+    -webkit-clip-path: polygon(0 5%, 100% 5%, 100% 6%, 0 6%);
+    clip-path: polygon(0 5%, 100% 5%, 100% 6%, 0 6%);
+  }
+  2.5% {
+    -webkit-clip-path: polygon(0 20%, 100% 20%, 100% 20%, 0 20%);
+    clip-path: polygon(0 20%, 100% 20%, 100% 20%, 0 20%);
+  }
+  3% {
+    -webkit-clip-path: polygon(0 10%, 100% 10%, 100% 10%, 0 10%);
+    clip-path: polygon(0 10%, 100% 10%, 100% 10%, 0 10%);
+  }
+  5% {
+    -webkit-clip-path: polygon(0 30%, 100% 30%, 100% 25%, 0 25%);
+    clip-path: polygon(0 30%, 100% 30%, 100% 25%, 0 25%);
+  }
+  5.5% {
+    -webkit-clip-path: polygon(0 15%, 100% 15%, 100% 16%, 0 16%);
+    clip-path: polygon(0 15%, 100% 15%, 100% 16%, 0 16%);
+  }
+  7% {
+    -webkit-clip-path: polygon(0 40%, 100% 40%, 100% 39%, 0 39%);
+    clip-path: polygon(0 40%, 100% 40%, 100% 39%, 0 39%);
+  }
+  8% {
+    -webkit-clip-path: polygon(0 20%, 100% 20%, 100% 21%, 0 21%);
+    clip-path: polygon(0 20%, 100% 20%, 100% 21%, 0 21%);
+  }
+  9% {
+    -webkit-clip-path: polygon(0 60%, 100% 60%, 100% 55%, 0 55%);
+    clip-path: polygon(0 60%, 100% 60%, 100% 55%, 0 55%);
+  }
+  10.5% {
+    -webkit-clip-path: polygon(0 30%, 100% 30%, 100% 31%, 0 31%);
+    clip-path: polygon(0 30%, 100% 30%, 100% 31%, 0 31%);
+  }
+  11% {
+    -webkit-clip-path: polygon(0 70%, 100% 70%, 100% 69%, 0 69%);
+    clip-path: polygon(0 70%, 100% 70%, 100% 69%, 0 69%);
+  }
+  13% {
+    -webkit-clip-path: polygon(0 40%, 100% 40%, 100% 41%, 0 41%);
+    clip-path: polygon(0 40%, 100% 40%, 100% 41%, 0 41%);
+  }
+  14% {
+    -webkit-clip-path: polygon(0 80%, 100% 80%, 100% 75%, 0 75%);
+    clip-path: polygon(0 80%, 100% 80%, 100% 75%, 0 75%);
+  }
+  14.5% {
+    -webkit-clip-path: polygon(0 50%, 100% 50%, 100% 51%, 0 51%);
+    clip-path: polygon(0 50%, 100% 50%, 100% 51%, 0 51%);
+  }
+  15% {
+    -webkit-clip-path: polygon(0 90%, 100% 90%, 100% 90%, 0 90%);
+    clip-path: polygon(0 90%, 100% 90%, 100% 90%, 0 90%);
+  }
+  16% {
+    -webkit-clip-path: polygon(0 60%, 100% 60%, 100% 60%, 0 60%);
+    clip-path: polygon(0 60%, 100% 60%, 100% 60%, 0 60%);
+  }
+  18% {
+    -webkit-clip-path: polygon(0 100%, 100% 100%, 100% 99%, 0 99%);
+    clip-path: polygon(0 100%, 100% 100%, 100% 99%, 0 99%);
+  }
+  20% {
+    -webkit-clip-path: polygon(0 70%, 100% 70%, 100% 71%, 0 71%);
+    clip-path: polygon(0 70%, 100% 70%, 100% 71%, 0 71%);
+  }
+  21.9% {
+    opacity: 1;
+    transform: translate3d(0, calc(-1 * var(--gap-vertical)), 0)
+      scale3d(-1, -1, 1);
+  }
+  22%,
+  100% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0);
+    -webkit-clip-path: polygon(0 0, 0 0, 0 0, 0 0);
+    clip-path: polygon(0 0, 0 0, 0 0, 0 0);
+  }
 }
 
 /* Flash */
 @keyframes glitch-anim-flash {
-	0%, 5% { 
-		opacity: 0.2; 
-	}
-	5.5%, 100% {
-		opacity: 0;
-	}
+  0%,
+  5% {
+    opacity: 0.2;
+  }
+  5.5%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes animateBgBlur {
+  0% {
+    background-position: 100% 50%;
+  }
+  25% {
+    background-position: 50% 0%;
+  }
+  50% {
+    background-position: 0% 50%;
+  }
+  75% {
+    background-position: 50% 100%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes animateBgBlurSmall {
+  0% {
+    background-position: 80% 50%;
+  }
+  25% {
+    background-position: 50% 20%;
+  }
+  50% {
+    background-position: 20% 50%;
+  }
+  75% {
+    background-position: 50% 80%;
+  }
+  100% {
+    background-position: 80% 50%;
+  }
+}
+
+@keyframes animeApparition {
+  0% {
+    opacity: 0;
+    margin-left: 100%;
+  }
+  70% {
+    margin-left: 0;
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes animeApparitionReverse {
+  0% {
+    opacity: 0;
+    margin-right: 100%;
+  }
+  70% {
+    margin-right: 0;
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes clipMe {
+  0%,
+  100% {
+    clip: rect(0px, 120px, 2px, 0px);
+  }
+  25% {
+    clip: rect(0px, 2px, 120px, 0px);
+  }
+  50% {
+    clip: rect(33px, 120px, 35px, 0px);
+  }
+  75% {
+    clip: rect(0px, 120px, 35px, 118px);
+  }
+}
+@keyframes rotate {
+  100% {
+    -webkit-transform: rotate(1turn);
+    transform: rotate(1turn);
+  }
 }
 /* ----- */
