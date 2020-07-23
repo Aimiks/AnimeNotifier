@@ -1,59 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Anilist</title>
-    <link href="https://fonts.googleapis.com/css?family=Didact+Gothic|Rajdhani&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css?family=Didact+Gothic|Rajdhani&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" type="text/css" media="screen" href="page.css" />
     <script src="../../lib/jquery-3.4.1.min.js"></script>
     <script src="../svg/all.js"></script>
 
     <script src="page.js"></script>
-</head>
-<body>
+  </head>
+  <body>
     <div id="firstPage" class="hide">
-        <div class="choiceContainer">
-                <span>Choose a platform</span>
-                <button class="choseAnilist"></button>
-                <button class="choseMAL"></button>
-        </div>
-        <div class="userInfos userAnilist hide">
-                <span>Anilist's username</span>
-                <input class="userNameInput" id="userName_input" type="text"/>
-                <button class="submitUserName" id="submitUserName">Ok</button>
-        </div>
-        <div class="userInfos userMAL hide">
-                <p class='infos'>Getting data from a MyAnimeList's list are slower than Anilist.<br> Don't panic if it takes minutes</p>
-                <span>MAL username</span>
-                <input class="userNameInput" id="userName_input_mal" type="text"/>
-                <button class="submitUserName" id="submitUserNameMAL">Ok</button>
-        </div>
+      <div class="choiceContainer">
+        <span>Choose a platform</span>
+        <button class="choseAnilist"></button>
+        <button class="choseMAL"></button>
+      </div>
+      <div class="userInfos userAnilist hide">
+        <span>Anilist's username</span>
+        <input class="userNameInput" id="userName_input" type="text" />
+        <button class="submitUserName" id="submitUserName">Ok</button>
+      </div>
+      <div class="userInfos userMAL hide">
+        <p class="infos">
+          Getting data from a MyAnimeList's list are slower than Anilist.<br />
+          Don't panic if it takes minutes
+        </p>
+        <span>MAL username</span>
+        <input class="userNameInput" id="userName_input_mal" type="text" />
+        <button class="submitUserName" id="submitUserNameMAL">Ok</button>
+      </div>
     </div>
     <div class="loading">
-        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="display: block; shape-rendering: auto;" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
-            <circle cx="50" cy="50" r="40" stroke-width="2" stroke="#1d3f72" stroke-dasharray="62.83185307179586 62.83185307179586" fill="none" stroke-linecap="round" transform="rotate(51.7279 50 50)">
-                <animateTransform attributeName="transform" type="rotate" dur="1.7857142857142856s" repeatCount="indefinite" keyTimes="0;1" values="0 50 50;360 50 50"></animateTransform>
-            </circle>
-            <text x="27" y="52" style="font-family:Arial; font-size:13; fill:#ffffff;">Loading</text>
-            <circle cx="50" cy="50" r="37" stroke-width="2" stroke="#5699d2" stroke-dasharray="58.119464091411174 58.119464091411174" stroke-dashoffset="58.119464091411174" fill="none" stroke-linecap="round" transform="rotate(-51.7279 50 50)">
-                <animateTransform attributeName="transform" type="rotate" dur="1.7857142857142856s" repeatCount="indefinite" keyTimes="0;1" values="0 50 50;-360 50 50"></animateTransform>
-            </circle>
-        </svg>
-    </div> 
-    <div id="main" class="hide">
-        <div id="optionBar">
-            <button id="refresh">Refresh</button>
-            <button id="refreshAll">Refresh data</button>
-            <button id="changeUser">Change user</button>
-        </div>
-        <div id="userName" title="Open my anime list"></div>
-        <div id="userOptions"></div>
-        <div id="animesContainer">
-
-        </div>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink"
+        style="display: block; shape-rendering: auto;"
+        viewBox="0 0 100 100"
+        preserveAspectRatio="xMidYMid"
+      >
+        <circle
+          cx="50"
+          cy="50"
+          r="40"
+          stroke-width="2"
+          stroke="#1d3f72"
+          stroke-dasharray="62.83185307179586 62.83185307179586"
+          fill="none"
+          stroke-linecap="round"
+          transform="rotate(51.7279 50 50)"
+        >
+          <animateTransform
+            attributeName="transform"
+            type="rotate"
+            dur="1.7857142857142856s"
+            repeatCount="indefinite"
+            keyTimes="0;1"
+            values="0 50 50;360 50 50"
+          ></animateTransform>
+        </circle>
+        <text
+          x="27"
+          y="52"
+          style="font-family: Arial; font-size: 13; fill: #ffffff;"
+        >
+          Loading
+        </text>
+        <circle
+          cx="50"
+          cy="50"
+          r="37"
+          stroke-width="2"
+          stroke="#5699d2"
+          stroke-dasharray="58.119464091411174 58.119464091411174"
+          stroke-dashoffset="58.119464091411174"
+          fill="none"
+          stroke-linecap="round"
+          transform="rotate(-51.7279 50 50)"
+        >
+          <animateTransform
+            attributeName="transform"
+            type="rotate"
+            dur="1.7857142857142856s"
+            repeatCount="indefinite"
+            keyTimes="0;1"
+            values="0 50 50;-360 50 50"
+          ></animateTransform>
+        </circle>
+      </svg>
     </div>
-
-</body>
+    <div id="main" class="hide">
+      <div id="optionBar">
+        <button id="refresh">Refresh</button>
+        <button id="refreshAll">Refresh data</button>
+        <button id="changeUser">Change user</button>
+      </div>
+      <div id="userName" title="Open my anime list"></div>
+      <div id="userOptions"></div>
+      <div id="animesContainer"></div>
+    </div>
+  </body>
 </html>

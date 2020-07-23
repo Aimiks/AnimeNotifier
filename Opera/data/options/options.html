@@ -1,87 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <title>Options page</title>
     <link rel="stylesheet" type="text/css" media="screen" href="options.css" />
-    <script src='/lib/jquery-3.4.1.min.js'></script>
+    <script src="/lib/jquery-3.4.1.min.js"></script>
     <script src="options.js"></script>
-</head>
-<body>
+  </head>
+  <body>
     <div class="prefGeneralContainer">
-        <span class="optionTitle">General preference</span>
-        <div class="optionLine">
-            <span class="info">This will allow to show animes where you have X episodes behind</span>
-            <label>Max episodes behind</label>
-            <select id="episodeBehind">
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">No limit</option>
-            </select>
-        </div>
+      <span class="optionTitle">General preference</span>
+      <div class="optionLine">
+        <span class="info"
+          >This will allow to show animes where you have X episodes behind</span
+        >
+        <label>Max episodes behind</label>
+        <select id="episodeBehind">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">No limit</option>
+        </select>
+      </div>
     </div>
     <div class="prefAnimesContainer">
-        <span class="optionTitle">Animes link preference</span>
-        <div class="optionLine">
-                <label>Subtitles</label>
-                <select id="animeSub">
-                        <option value="1">None</option>
-                        <option value="2">ENG</option>
-                        <option value="3">FR</option>
-                        <option value="4">RUS</option>
-                        <option value="5">SPANISH</option>
-                </select>
-            </div>
-        <div class="optionLine">
-            <label>Minimum quality</label>
-            <select id="qualityAnime">
-                    <option value="1">Any</option>
-                    <option value="2">720p</option>
-                    <option value="3">1080p</option>
-            </select>
-        </div>
-        <div class="optionLine">
-            <label>Format</label>
-            <select id="formatAnime">
-                    <option value="1">Any</option>
-                    <option value="2">MP4</option>
-                    <option value="3">MKV</option>
-            </select>
-        </div>
-        <div class="optionLine">
-            <label>Max number of download links [Not implemented]</label>
-            <select id="dlNumber">
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-            </select>
-        </div>
+      <span class="optionTitle">Animes link preference</span>
+      <div class="optionLine">
+        <label>Subtitles</label>
+        <select id="animeSub">
+          <option value="1">None</option>
+          <option value="2">ENG</option>
+          <option value="3">FR</option>
+          <option value="4">RUS</option>
+          <option value="5">SPANISH</option>
+        </select>
+      </div>
+      <div class="optionLine">
+        <label>Minimum quality</label>
+        <select id="qualityAnime">
+          <option value="1">Any</option>
+          <option value="2">720p</option>
+          <option value="3">1080p</option>
+        </select>
+      </div>
+      <div class="optionLine">
+        <label>Format</label>
+        <select id="formatAnime">
+          <option value="1">Any</option>
+          <option value="2">MP4</option>
+          <option value="3">MKV</option>
+        </select>
+      </div>
+      <div class="optionLine">
+        <label>Max number of download links [Not implemented]</label>
+        <select id="dlNumber">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+        </select>
+      </div>
     </div>
     <div class="networkContainer">
-        <span class="optionTitle">Network</span>
-        <div class="optionLine">
-            <label>Time between request to get fresh data</label>
-            <select id="delayRequestData">
-                    <option value="1">1 minute</option>
-                    <option value="2">5 minutes</option>
-                    <option value="3">10 minutes</option>
-                    <option value="4">30 minutes</option>
-            </select>
-        </div>
-        <div class="optionLine">
-            <label>Time between request to get download links</label>
-            <select id="delayRequestDl">
-                    <option value="1">2 minutes</option>
-                    <option value="2">5 minutes</option>
-                    <option value="3">10 minutes</option>
-                    <option value="4">30 minutes</option>
-            </select>
-        </div>
+      <span class="optionTitle">Network</span>
+      <div class="optionLine">
+        <label>Time between request to get fresh data</label>
+        <select id="delayRequestData">
+          <option value="1">1 minute</option>
+          <option value="2">5 minutes</option>
+          <option value="3">10 minutes</option>
+          <option value="4">30 minutes</option>
+        </select>
+      </div>
+      <div class="optionLine">
+        <label>Time between request to get download links</label>
+        <select id="delayRequestDl">
+          <option value="1">2 minutes</option>
+          <option value="2">5 minutes</option>
+          <option value="3">10 minutes</option>
+          <option value="4">30 minutes</option>
+        </select>
+      </div>
+    </div>
+    <div class="viewContainer">
+      <span class="optionTitle">View/UI</span>
+      <div class="optionLine">
+        <label>
+          Enable 3d perspective when hovering [Enabling this can make the view
+          blurry]
+        </label>
+        <select id="enable3d">
+          <option value="0">No</option>
+          <option value="1">Yes</option>
+        </select>
+      </div>
     </div>
     <div id="status"></div>
     <div class="saveBar">
-        <button id="saveOptions">Save</button>
+      <button id="saveOptions">Save</button>
     </div>
-</body>
+  </body>
 </html>
