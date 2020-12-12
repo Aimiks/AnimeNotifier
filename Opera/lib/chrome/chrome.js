@@ -276,10 +276,7 @@ async function requestData() {
 
   console.log("Requesting data...");
   if (user.type === "anilist") {
-    return fetch(ani_url, options)
-      .then(handleResponse)
-      .then(handleData)
-      .catch(handleError);
+    return fetch(ani_url, options).then(handleResponse).then(handleData).catch(handleError);
   } else {
     var mal_query = `https://api.jikan.moe/v3/user/${user.userName}/animelist/watching`;
     return fetch(mal_query)
@@ -311,9 +308,7 @@ async function requestData() {
                 variables: mal_ani_variables,
               }),
             };
-            data = await fetch(mal_ani_url, mal_ani_options)
-              .then(handleResponse)
-              .catch(handleError);
+            data = await fetch(mal_ani_url, mal_ani_options).then(handleResponse).catch(handleError);
             if (remainingFetch > 0) {
               console.log("[MAL] Fetch abort due to rate limit");
               finalData.data.MediaListCollection.lists[0].entries.push({
@@ -321,9 +316,7 @@ async function requestData() {
                 progress: a.watched_episodes,
                 media: data.data.Media,
               });
-              await new Promise((r) =>
-                setTimeout(r, mals_anime.length >= 90 ? 666 : 100)
-              );
+              await new Promise((r) => setTimeout(r, mals_anime.length >= 90 ? 666 : 100));
             }
           }
           handleData(finalData);
@@ -345,9 +338,7 @@ async function requestData() {
     entries = data.data.MediaListCollection.lists[0].entries;
     // something has to to be removed
     if (get_animes_data().length > entries.length) {
-      animes_data = get_animes_data().filter(
-        (d) => entries.map((e) => e.id).findIndex(d.id) > -1
-      );
+      animes_data = get_animes_data().filter((d) => entries.map((e) => e.id).findIndex((e) => e === d.id) > -1);
     }
     entries.forEach((entry) => {
       if (entry.media.nextAiringEpisode === null) {
@@ -355,12 +346,9 @@ async function requestData() {
         // Or the remaining episodes to watch match the userpref
         if (
           getUserOptionsValue("episodeBehind") === null ||
-          entry.progress >=
-            entry.media.episodes - getUserOptionsValue("episodeBehind")
+          entry.progress >= entry.media.episodes - getUserOptionsValue("episodeBehind")
         ) {
-          let nextEp = entry.media.airingSchedule.nodes.find(
-            (n) => n.episode === entry.progress + 1
-          );
+          let nextEp = entry.media.airingSchedule.nodes.find((n) => n.episode === entry.progress + 1);
           let dateDiff;
           if (nextEp) {
             let nextEpAir = new Date(nextEp.airingAt * 1000);
@@ -371,9 +359,7 @@ async function requestData() {
             time: 0,
             status: "UP",
             progress: entry.progress,
-            behind: entry.media.episodes
-              ? entry.media.episodes - entry.progress
-              : "unk",
+            behind: entry.media.episodes ? entry.media.episodes - entry.progress : "unk",
             new: dateDiff && dateDiff < 7,
             media: entry.media,
           });
@@ -389,10 +375,7 @@ async function requestData() {
         });
       } else if (
         getUserOptionsValue("episodeBehind") === null ||
-        entry.progress >=
-          entry.media.nextAiringEpisode.episode -
-            1 -
-            getUserOptionsValue("episodeBehind")
+        entry.progress >= entry.media.nextAiringEpisode.episode - 1 - getUserOptionsValue("episodeBehind")
       ) {
         add_anime({
           id: entry.media.id,
@@ -471,9 +454,7 @@ async function searchDlLinks(title, ep, lang, quality, format) {
   if (format) {
     query += "+" + format;
   }
-  console.log(
-    `Query : https://nyaa.si/?f=1&c=${category}&q=${query}&p=1&o=desc&s=seeders`
-  );
+  console.log(`Query : https://nyaa.si/?f=1&c=${category}&q=${query}&p=1&o=desc&s=seeders`);
   // regex to get string that contain TITLE and are not TITLE
   let regexStrictQuery = `([a-zA-Z]${title}[a-zA-Z])|(${title}[a-zA-Z0])|([a-zA-Z0]${title})`;
   let regexStrict = new RegExp(regexStrictQuery, "gmi");
@@ -487,10 +468,7 @@ async function searchDlLinks(title, ep, lang, quality, format) {
   let regexSeason = new RegExp(`s${ep}\\D|S${ep}\\D`);
   let returnObj = null;
   let findStrict = false;
-  return fetch(
-    `https://nyaa.si/?f=1&c=${category}&q=${query}&p=1&o=desc&s=seeders`,
-    opt
-  )
+  return fetch(`https://nyaa.si/?f=1&c=${category}&q=${query}&p=1&o=desc&s=seeders`, opt)
     .then((response) => response.text())
     .then((txt) => {
       let html = txt;
@@ -499,14 +477,9 @@ async function searchDlLinks(title, ep, lang, quality, format) {
       $(tr).each(function () {
         if (!findStrict) {
           let name = $(this).find("td:nth-child(2) a:not(.comments)").text();
-          let magnet = $(this)
-            .find("td:nth-child(3) a:nth-child(2)")
-            .attr("href");
-          let dlLink =
-            domain +
-            $(this).find("td:nth-child(3) a:nth-child(1)").attr("href");
-          let mainPage =
-            domain + $(this).find("td:nth-child(2) a:last-child").attr("href");
+          let magnet = $(this).find("td:nth-child(3) a:nth-child(2)").attr("href");
+          let dlLink = domain + $(this).find("td:nth-child(3) a:nth-child(1)").attr("href");
+          let mainPage = domain + $(this).find("td:nth-child(2) a:last-child").attr("href");
           let up = $(this).find("td:nth-child(6)").text();
           let down = $(this).find("td:nth-child(7)").text();
           if (name) {
@@ -567,10 +540,7 @@ async function getDlLinks(a) {
   );
   if (!dl || !dl.magnet) {
     let secTitle;
-    if (
-      a.media.title.userPreferred === a.media.title.romaji &&
-      a.media.title.english
-    ) {
+    if (a.media.title.userPreferred === a.media.title.romaji && a.media.title.english) {
       secTitle = a.media.title.english;
     } else {
       secTitle = a.media.title.romaji;
@@ -767,9 +737,7 @@ function openLink(link) {
 function updateBadge() {
   let color;
   let nbTotal = get_animes_data().filter((a) => a.status === "UP").length;
-  let nbTotalDl = get_animes_data().filter(
-    (a) => a.status === "UP" && a.dl && a.dl.length > 0
-  ).length;
+  let nbTotalDl = get_animes_data().filter((a) => a.status === "UP" && a.dl && a.dl.length > 0).length;
   if (nbTotal === 0) {
     color = "#3b3b3b";
   } else if (nbTotalDl <= nbTotal * 0.25) {
@@ -787,8 +755,7 @@ function get_user_options() {
 }
 
 function userOptionsChanged() {
-  let val =
-    JSON.stringify(oldUserOptions) === JSON.stringify(get_user_options());
+  let val = JSON.stringify(oldUserOptions) === JSON.stringify(get_user_options());
   oldUserOptions = user_options;
   return !val;
 }
