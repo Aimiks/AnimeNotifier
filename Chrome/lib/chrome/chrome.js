@@ -43,6 +43,7 @@ var mal_ani_query = `
 query ($idMal: Int) {
   Media(idMal: $idMal, type: ANIME) {
                             id
+                            idMal
                             title {
                                 romaji
                                 english
@@ -118,6 +119,8 @@ var backgroundError = false;
 var backgroundErrorMsg = "";
 var remainingFetch = 99;
 var canFetchData = true;
+var delayOpenLink = 50;
+var canOpenLink = true;
 
 function getUserOptionsValue(key) {
   let val = user_options[key];
@@ -719,10 +722,8 @@ function setBadge(text, color, cb) {
   }
   if (color) {
     chrome.browserAction.setBadgeBackgroundColor({ color: color }, cb);
-    opr.sidebarAction.setBadgeBackgroundColor({ color: color });
   }
   chrome.browserAction.setBadgeText({ text: text }, cb);
-  opr.sidebarAction.setBadgeText({ text: text });
 }
 
 function isInit() {
@@ -732,7 +733,11 @@ function setInit(bool) {
   initialized = bool;
 }
 function openLink(link) {
-  chrome.tabs.create({ url: link });
+  if (canOpenLink) {
+    chrome.tabs.create({ url: link });
+    canOpenLink = false;
+    setTimeout(() => (canOpenLink = true), delayOpenLink);
+  }
 }
 function updateBadge() {
   let color;

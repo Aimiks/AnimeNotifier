@@ -58,8 +58,7 @@ a {
   border-radius: 5px;
   width: 90%;
   position: relative;
-  animation: animeApparition 0.85s cubic-bezier(0.18, 0.89, 0.32, 1.28) 0s 1
-    backwards;
+  animation: animeApparition 0.85s cubic-bezier(0.18, 0.89, 0.32, 1.28) 0s 1 backwards;
 }
 .animeLine .animeImg img {
   width: 75px;
@@ -230,6 +229,8 @@ a {
   white-space: nowrap;
   overflow: hidden;
   text-align: center;
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 .infosContainer .animeCountDown {
@@ -291,11 +292,7 @@ a {
   height: 250%;
   -webkit-transform-origin: 0 0;
   transform-origin: 0 0;
-  background-image: linear-gradient(
-    45deg,
-    rgb(216, 141, 255) 40%,
-    rgb(0, 225, 255)
-  );
+  background-image: linear-gradient(45deg, rgb(216, 141, 255) 40%, rgb(0, 225, 255));
   animation: rotate 1s cubic-bezier(0.12, 0.94, 0.4, 1.01) infinite;
 }
 .infosContainer .animeIsUp::after {
@@ -738,8 +735,7 @@ body {
 @keyframes glitch-anim-3 {
   0% {
     opacity: 1;
-    transform: translate3d(0, calc(-1 * var(--gap-vertical)), 0)
-      scale3d(-1, -1, 1);
+    transform: translate3d(0, calc(-1 * var(--gap-vertical)), 0) scale3d(-1, -1, 1);
     -webkit-clip-path: polygon(0 1%, 100% 1%, 100% 3%, 0 3%);
     clip-path: polygon(0 1%, 100% 1%, 100% 3%, 0 3%);
   }
@@ -817,8 +813,7 @@ body {
   }
   21.9% {
     opacity: 1;
-    transform: translate3d(0, calc(-1 * var(--gap-vertical)), 0)
-      scale3d(-1, -1, 1);
+    transform: translate3d(0, calc(-1 * var(--gap-vertical)), 0) scale3d(-1, -1, 1);
   }
   22%,
   100% {

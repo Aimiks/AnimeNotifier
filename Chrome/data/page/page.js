@@ -32,6 +32,7 @@ function dateToCountDown(sec) {
  */
 function draw(entry) {
   let div_infos = "";
+  let typeUser = extension.user.type;
   // Get existing anime line
   let animeLine = $(`.animeLine[data-id=${entry.media.id}]`);
   let line_exist = animeLine.length !== 0;
@@ -40,15 +41,13 @@ function draw(entry) {
   // We create the line if there is none for this entry
   if (!line_exist) {
     animeLine = $(
-      `<div data-id=${entry.media.id} class='animeLine ${
-        entry.status === "AIRING" ? "airing" : "up"
-      } ${entry.dl && entry.dl.length ? "withDl" : ""}'></div>`
+      `<div data-id=${entry.media.id} class='animeLine ${entry.status === "AIRING" ? "airing" : "up"} ${
+        entry.dl && entry.dl.length ? "withDl" : ""
+      }'></div>`
     );
   }
   // next episode is the nextAiringEpisode or the actual entry progress + 1
-  let nextEp = entry.media.nextAiringEpisode
-    ? entry.media.nextAiringEpisode.episode
-    : entry.progress + 1;
+  let nextEp = entry.media.nextAiringEpisode ? entry.media.nextAiringEpisode.episode : entry.progress + 1;
   if (entry.status === "AIRING") {
     var diff = entry.time;
     var dateAiringString = dateToCountDown(diff);
@@ -83,17 +82,11 @@ function draw(entry) {
     }
   }
   // Draw badges (ep behind, new, ep number...)
-  let badges = $(`<div class='badges'></div>`).append(
-    `<div class='epNumber'>${nextEp}</div>`
-  );
+  let badges = $(`<div class='badges'></div>`).append(`<div class='epNumber'>${nextEp}</div>`);
   if (entry.new) {
     badges.append($(`<div class='new'>New</div>`));
   } else if (entry.behind) {
-    badges.append(
-      $(
-        `<div class='behind'>${entry.behind}<span class='textBehind'>&nbsp;ep. behind</span></div>`
-      )
-    );
+    badges.append($(`<div class='behind'>${entry.behind}<span class='textBehind'>&nbsp;ep. behind</span></div>`));
   }
   let animeLineContent = $(
     `<div class='infosContainer' style='background-image:url(${entry.media.coverImage.extraLarge})'></div>`
@@ -113,11 +106,15 @@ function draw(entry) {
   } else {
     animeLineContent.append(`<div class='bgContainer'></div>`);
   }
+  let animeLink =
+    typeUser === "anilist"
+      ? `https://anilist.co/anime/${entry.media.id}`
+      : `https://myanimelist.net/anime/${entry.media.idMal}`;
   animeLineContent
     .append(
       $(`<div class='top'></div>`)
         .append(
-          `<div class='animeTitle'>${entry.media.title.userPreferred}</div>`
+          `<div class='animeTitle' href='${animeLink}' title='Open anime page'>${entry.media.title.userPreferred}</div>`
         )
         .append(badges)
     )
@@ -158,19 +155,14 @@ function isOldDataDeprecated(newAnimesData) {
   if (oldAnimesData.length !== newAnimesData.length) {
     return true;
   }
-  let diffId = oldAnimesData.filter(
-    (d) => newAnimesData.filter((e) => e.id === d.id).length === 0
-  );
+  let diffId = oldAnimesData.filter((d) => newAnimesData.filter((e) => e.id === d.id).length === 0);
   if (diffId.length) {
     return true;
   }
   let res = false;
   oldAnimesData.forEach((d) => {
     if (!res) {
-      let isIn =
-        newAnimesData.findIndex(
-          (nd) => nd.progress === d.progress && nd.status === d.status
-        ) > -1;
+      let isIn = newAnimesData.findIndex((nd) => nd.progress === d.progress && nd.status === d.status) > -1;
       if (!isIn) {
         res = true;
       }
@@ -191,11 +183,12 @@ function refresh() {
   updateGrayScaleBG();
   $("#refresh").prop("disabled", false);
   $("#refresh").text(oldText);
-  $(".dlButton").on("click", function () {
+  $(".dlButton, .animeTitle").on("click", function (e) {
+    e.preventDefault();
     extension.openLink($(this).attr("href"));
   });
   let nbAnimeLine = $(".animeLine").length;
-  let animGlobalTime = 1;
+  let animGlobalTime = nbAnimeLine > 3 ? 1 : 0.5;
   $(".animeLine").each(function (ind) {
     if (ind % 2) {
       $(this).css({ "animation-name": "animeApparitionReverse" });
@@ -287,9 +280,7 @@ function drawUserOptions() {
   $("#userOptions > *").remove();
   for (let [key, value] of Object.entries(extension.get_user_options())) {
     if (getUserOptionString(key, value)) {
-      $("#userOptions").append(
-        `<div class='optionBadge'>${getUserOptionString(key, value)}</div>`
-      );
+      $("#userOptions").append(`<div class='optionBadge'>${getUserOptionString(key, value)}</div>`);
     }
   }
 }
@@ -299,17 +290,9 @@ function updateGrayScaleBG() {
     let a = extension.get_anime($(this).data("id"));
     if (a) {
       let nextEp = a.media.nextAiringEpisode;
-      let lastEp = a.media.airingSchedule.nodes.find(
-        (e) => e.episode === nextEp.episode - 1
-      );
+      let lastEp = a.media.airingSchedule.nodes.find((e) => e.episode === nextEp.episode - 1);
       if (lastEp) {
-        let newValue = scale(
-          nextEp.timeUntilAiring,
-          0,
-          nextEp.airingAt - lastEp.airingAt,
-          0,
-          100
-        );
+        let newValue = scale(nextEp.timeUntilAiring, 0, nextEp.airingAt - lastEp.airingAt, 0, 100);
         $(".bg", $(this)).width(newValue + "%");
       }
     }
@@ -361,13 +344,9 @@ function init() {
       $("#userName").text(res.user.userName);
       $("#userName").on("click", function () {
         if (res.user.type === "anilist") {
-          extension.openLink(
-            `https://anilist.co/user/${res.user.userName}/animelist`
-          );
+          extension.openLink(`https://anilist.co/user/${res.user.userName}/animelist`);
         } else {
-          extension.openLink(
-            `https://myanimelist.net/animelist/${res.user.userName}`
-          );
+          extension.openLink(`https://myanimelist.net/animelist/${res.user.userName}`);
         }
       });
       drawUserOptions();
@@ -386,9 +365,7 @@ function init() {
         setInterval(() => {
           // We check if we need to refresh the view because of the data
           if (
-            !(
-              extension.viewHaveToBeLoading() || extension.viewHaveToRefresh()
-            ) &&
+            !(extension.viewHaveToBeLoading() || extension.viewHaveToRefresh()) &&
             isOldDataDeprecated(extension.get_animes_data())
           ) {
             refresh();
@@ -435,12 +412,7 @@ function init() {
 }
 function update3dAnimeLine(oLayer) {
   oLayer.css({
-    transform:
-      "perspective(120px) translateZ(0) rotateX(" +
-      xAngle +
-      "deg) rotateY(" +
-      yAngle +
-      "deg)",
+    transform: "perspective(120px) translateZ(0) rotateX(" + xAngle + "deg) rotateY(" + yAngle + "deg)",
     transition: "none",
     "-webkit-transition": "none",
   });
@@ -507,14 +479,10 @@ $(function () {
   $("#submitUserName").on("click", function () {
     let userName = $("#userName_input").val();
     if (userName.length > 0) {
-      extension.saveStorage(
-        "user",
-        { userName: userName, type: "anilist" },
-        () => {
-          extension.setInit(false);
-          init();
-        }
-      );
+      extension.saveStorage("user", { userName: userName, type: "anilist" }, () => {
+        extension.setInit(false);
+        init();
+      });
     }
   });
   $("#submitUserNameMAL").on("click", function () {
