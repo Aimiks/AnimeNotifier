@@ -40,8 +40,9 @@ query ($userName: String) { # Define which variables will be used in the query (
 }`;
 
 var mal_ani_query = ` 
-query ($idMal: Int) {
-  Media(idMal: $idMal, type: ANIME) {
+query ($idMal_in: [Int], $page: Int) {
+  Page(page:$page,perPage:50) {
+    media(idMal_in: $idMal_in, type: ANIME) {
                             id
                             idMal
                             title {
@@ -71,7 +72,8 @@ query ($idMal: Int) {
                             }
                             episodes
                           }
-                      }`;
+                      }
+                    }`;
 
 var variables = {
   userName: "",
@@ -91,7 +93,8 @@ var ani_url = "https://graphql.anilist.co",
     }),
   };
 var mal_ani_variables = {
-  idMal: 0,
+  idMal_in: [],
+  page: 1,
 };
 var mal_ani_url = "https://graphql.anilist.co",
   mal_ani_options = {
@@ -121,6 +124,7 @@ var remainingFetch = 99;
 var canFetchData = true;
 var delayOpenLink = 50;
 var canOpenLink = true;
+var operaBrowser = typeof opr != "undefined";
 
 function getUserOptionsValue(key) {
   let val = user_options[key];
@@ -298,8 +302,11 @@ async function requestData() {
               },
             },
           };
-          for (const a of mals_anime) {
-            mal_ani_variables.idMal = a.mal_id;
+          const idMals = mals_anime.map((a) => a.mal_id);
+          const pages = Math.ceil(idMals.length / 50);
+          for (let i = 1; i <= pages; i++) {
+            mal_ani_variables.idMal_in = idMals;
+            mal_ani_variables.page = i;
             mal_ani_options = {
               method: "POST",
               headers: {
@@ -311,15 +318,17 @@ async function requestData() {
                 variables: mal_ani_variables,
               }),
             };
-            data = await fetch(mal_ani_url, mal_ani_options).then(handleResponse).catch(handleError);
             if (remainingFetch > 0) {
-              console.log("[MAL] Fetch abort due to rate limit");
-              finalData.data.MediaListCollection.lists[0].entries.push({
-                id: data.data.Media.id,
-                progress: a.watched_episodes,
-                media: data.data.Media,
+              data = await fetch(mal_ani_url, mal_ani_options).then(handleResponse).catch(handleError);
+              data.data.Page.media.forEach((anime) => {
+                finalData.data.MediaListCollection.lists[0].entries.push({
+                  id: anime.id,
+                  progress: mals_anime.find((a) => a.mal_id === anime.idMal).watched_episodes,
+                  media: anime,
+                });
               });
-              await new Promise((r) => setTimeout(r, mals_anime.length >= 90 ? 666 : 100));
+            } else {
+              console.log("[MAL] Fetch abort due to rate limit");
             }
           }
           handleData(finalData);
@@ -458,17 +467,6 @@ async function searchDlLinks(title, ep, lang, quality, format) {
     query += "+" + format;
   }
   console.log(`Query : https://nyaa.si/?f=1&c=${category}&q=${query}&p=1&o=desc&s=seeders`);
-  // regex to get string that contain TITLE and are not TITLE
-  let regexStrictQuery = `([a-zA-Z]${title}[a-zA-Z])|(${title}[a-zA-Z0])|([a-zA-Z0]${title})`;
-  let regexStrict = new RegExp(regexStrictQuery, "gmi");
-  // regex to get string that contain EP or 0+EP
-  let regexEpisode = new RegExp(`\\D${ep}\\D|\\D0${ep}\\D`, "gmi");
-  // regex to match {ep} bits like '10 bits'
-  let regexBits = new RegExp(`\\D${ep}bit|\\D${ep}\\Dbit`);
-  // regex to match v{ep}
-  let regexVersion = new RegExp(`v${ep}\\D|V${ep}\\D`);
-  // regex to match s{ep}
-  let regexSeason = new RegExp(`s${ep}\\D|S${ep}\\D`);
   let returnObj = null;
   let findStrict = false;
   return fetch(`https://nyaa.si/?f=1&c=${category}&q=${query}&p=1&o=desc&s=seeders`, opt)
@@ -486,13 +484,8 @@ async function searchDlLinks(title, ep, lang, quality, format) {
           let up = $(this).find("td:nth-child(6)").text();
           let down = $(this).find("td:nth-child(7)").text();
           if (name) {
-            if (
-              name.match(regexStrict) &&
-              name.match(regexEpisode) &&
-              !name.match(regexBits) &&
-              !name.match(regexVersion) &&
-              !(name.match(regexEpisode) === name.match(regexSeason))
-            ) {
+            const score = getMatchingScore(name, title, ep);
+            if (score === 1) {
               if (!returnObj) {
                 returnObj = {
                   name,
@@ -504,12 +497,7 @@ async function searchDlLinks(title, ep, lang, quality, format) {
                   down,
                 };
               }
-            } else if (
-              name.match(regexEpisode) &&
-              !name.match(regexBits) &&
-              !name.match(regexVersion) &&
-              !(name.match(regexEpisode) === name.match(regexSeason))
-            ) {
+            } else if (score === 3) {
               returnObj = {
                 name,
                 magnet,
@@ -722,8 +710,14 @@ function setBadge(text, color, cb) {
   }
   if (color) {
     chrome.browserAction.setBadgeBackgroundColor({ color: color }, cb);
+    if (operaBrowser) {
+      opr.sidebarAction.setBadgeBackgroundColor({ color: color });
+    }
   }
   chrome.browserAction.setBadgeText({ text: text }, cb);
+  if (operaBrowser) {
+    opr.sidebarAction.setBadgeText({ text: text });
+  }
 }
 
 function isInit() {

@@ -85,9 +85,15 @@ function draw(entry) {
   let badges = $(`<div class='badges'></div>`).append(`<div class='epNumber'>${nextEp}</div>`);
   if (entry.new) {
     badges.append($(`<div class='new'>New</div>`));
-  } else if (entry.behind) {
-    badges.append($(`<div class='behind'>${entry.behind}<span class='textBehind'>&nbsp;ep. behind</span></div>`));
   }
+  if (entry.lastEpisode) {
+    badges.append($(`<div class='lastEp cuttedText'>Last<span class='textFull'>&nbsp;episode</span></div>`));
+  } else if (entry.behind && !entry.new) {
+    badges.append(
+      $(`<div class='behind cuttedText'>${entry.behind}<span class='textFull'>&nbsp;ep. behind</span></div>`)
+    );
+  }
+
   let animeLineContent = $(
     `<div class='infosContainer' style='background-image:url(${entry.media.coverImage.extraLarge})'></div>`
   ).append("<div class='blurBg'></div>");

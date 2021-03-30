@@ -177,6 +177,7 @@ a {
   padding: 10px;
   height: 20px;
   min-width: 20px;
+  letter-spacing: 1px;
 }
 .infosContainer .top .badges .epNumber {
   font-family: "Rajdhani", Arial, Helvetica, sans-serif;
@@ -186,28 +187,37 @@ a {
   z-index: 2;
   padding: 5px;
 }
-.infosContainer .top .badges .new {
-  background-color: rgb(60, 141, 235);
-}
-.infosContainer .top .badges .behind {
-  background-color: rgb(224, 49, 49);
+.infosContainer .top .badges .cuttedText {
   transition: max-width 0.25s ease-in-out;
   max-width: 20px;
   cursor: default;
 }
-.infosContainer .top .badges .behind:hover {
+.infosContainer .top .badges .cuttedText:hover {
   max-width: 100px;
 }
-.infosContainer .top .badges .behind .textBehind {
-  width: 20px;
+.infosContainer .top .badges .textFull {
+  width: inherit;
   white-space: nowrap;
   overflow: hidden;
   transition: width 0.25s ease-in-out;
   text-align: left;
+  box-sizing: border-box;
 }
-.infosContainer .top .badges .behind:hover .textBehind {
+.infosContainer .top .badges .cuttedText:hover .textFull {
   width: 100%;
 }
+
+.infosContainer .top .badges .new {
+  background-color: rgb(60, 141, 235);
+}
+.infosContainer .top .badges .lastEp {
+  background-color: rgb(186 45 149);
+  max-width: 40px;
+}
+.infosContainer .top .badges .behind {
+  background-color: rgb(224, 49, 49);
+}
+
 .infosContainer .animeTitle,
 .infosContainer .animeCountDown,
 .infosContainer .animeIsUp,

@@ -353,6 +353,7 @@ async function requestData() {
       animes_data = get_animes_data().filter((d) => entries.map((e) => e.id).findIndex((e) => e === d.id) > -1);
     }
     entries.forEach((entry) => {
+      // === Anime is FINISHED (or in pause ?) ===
       if (entry.media.nextAiringEpisode === null) {
         // If userpref is any anime with unlimited episode behind
         // Or the remaining episodes to watch match the userpref
@@ -373,10 +374,14 @@ async function requestData() {
             progress: entry.progress,
             behind: entry.media.episodes ? entry.media.episodes - entry.progress : "unk",
             new: dateDiff && dateDiff < 7,
+            lastEpisode: entry.media.episodes - entry.progress === 1,
             media: entry.media,
           });
         }
-      } else if (entry.progress === entry.media.nextAiringEpisode.episode - 1) {
+      }
+      // === [Anime is AIRING] ===
+      // If user is up to date and the next episode isn't up
+      else if (entry.progress === entry.media.nextAiringEpisode.episode - 1) {
         var diff = entry.media.nextAiringEpisode.timeUntilAiring;
         add_anime({
           id: entry.media.id,
@@ -385,7 +390,9 @@ async function requestData() {
           progress: entry.progress,
           media: entry.media,
         });
-      } else if (
+      }
+      // Else, if user show unlimited episodes OR the user is behind but his options accept that much behind
+      else if (
         getUserOptionsValue("episodeBehind") === null ||
         entry.progress >= entry.media.nextAiringEpisode.episode - 1 - getUserOptionsValue("episodeBehind")
       ) {
@@ -467,17 +474,6 @@ async function searchDlLinks(title, ep, lang, quality, format) {
     query += "+" + format;
   }
   console.log(`Query : https://nyaa.si/?f=1&c=${category}&q=${query}&p=1&o=desc&s=seeders`);
-  // regex to get string that contain TITLE and are not TITLE
-  let regexStrictQuery = `([a-zA-Z]${title}[a-zA-Z])|(${title}[a-zA-Z0])|([a-zA-Z0]${title})`;
-  let regexStrict = new RegExp(regexStrictQuery, "gmi");
-  // regex to get string that contain EP or 0+EP
-  let regexEpisode = new RegExp(`\\D${ep}\\D|\\D0${ep}\\D`, "gmi");
-  // regex to match {ep} bits like '10 bits'
-  let regexBits = new RegExp(`\\D${ep}bit|\\D${ep}\\Dbit`);
-  // regex to match v{ep}
-  let regexVersion = new RegExp(`v${ep}\\D|V${ep}\\D`);
-  // regex to match s{ep}
-  let regexSeason = new RegExp(`s${ep}\\D|S${ep}\\D`);
   let returnObj = null;
   let findStrict = false;
   return fetch(`https://nyaa.si/?f=1&c=${category}&q=${query}&p=1&o=desc&s=seeders`, opt)
@@ -495,13 +491,8 @@ async function searchDlLinks(title, ep, lang, quality, format) {
           let up = $(this).find("td:nth-child(6)").text();
           let down = $(this).find("td:nth-child(7)").text();
           if (name) {
-            if (
-              name.match(regexStrict) &&
-              name.match(regexEpisode) &&
-              !name.match(regexBits) &&
-              !name.match(regexVersion) &&
-              !(name.match(regexEpisode) === name.match(regexSeason))
-            ) {
+            const score = getMatchingScore(name, title, ep);
+            if (score === 1) {
               if (!returnObj) {
                 returnObj = {
                   name,
@@ -513,12 +504,7 @@ async function searchDlLinks(title, ep, lang, quality, format) {
                   down,
                 };
               }
-            } else if (
-              name.match(regexEpisode) &&
-              !name.match(regexBits) &&
-              !name.match(regexVersion) &&
-              !(name.match(regexEpisode) === name.match(regexSeason))
-            ) {
+            } else if (score === 3) {
               returnObj = {
                 name,
                 magnet,
@@ -557,6 +543,7 @@ async function getDlLinks(a) {
     } else {
       secTitle = a.media.title.romaji;
     }
+    // Try with secondary title
     await new Promise((r) => setTimeout(r, 500));
     dl = await searchDlLinks(
       secTitle,
@@ -567,6 +554,7 @@ async function getDlLinks(a) {
     );
     if ((!dl || !dl.magnet) && a.media.synonyms.length) {
       let i = 0;
+      // Try with synonyms
       while ((!dl || !dl.magnet) && a.media.synonyms.length - 1 < i) {
         await new Promise((r) => setTimeout(r, 500));
         dl = await searchDlLinks(
